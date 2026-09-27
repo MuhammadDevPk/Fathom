@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "command": "python3 scripts/agent_capture.py --claude"
+      }
+    ],
+    "Stop": [
+      {
+        "command": "python3 scripts/agent_capture.py --claude"
+      }
+    ]
+  }
+}
