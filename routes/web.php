@@ -3,19 +3,23 @@
 use App\Http\Controllers\HighlightController;
 use App\Http\Controllers\MeetingController;
 use Illuminate\Support\Facades\Route;
-
 use Illuminate\Support\Facades\Artisan;
+use App\Models\Meeting;
+use App\Models\Highlight;
 
 Route::get('/setup-demo-data', function () {
-    // Wipes the old database, runs migrations, and executes your updated MeetingSeeder
-    Artisan::call('migrate:fresh', [
-        '--seed' => true,
+    // 1. Safely delete the old records without dropping the database tables
+    Highlight::query()->delete();
+    Meeting::query()->delete();
+
+    // 2. Run only the seeder command
+    Artisan::call('db:seed', [
+        '--class' => 'MeetingSeeder',
         '--force' => true
     ]);
 
-    return 'Database refreshed and seeded successfully! Output: ' . Artisan::output();
+    return 'Old data deleted and new data seeded successfully! Output: ' . Artisan::output();
 });
-
 Route::inertia('/', 'Welcome')->name('home');
 Route::get('demo/meeting', [MeetingController::class, 'demo'])->name('demo.meeting');
 Route::post('demo/login', [MeetingController::class, 'demoLogin'])->middleware('throttle:10,1')->name('demo.login');
