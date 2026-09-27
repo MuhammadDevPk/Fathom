@@ -3,6 +3,20 @@
 use App\Http\Controllers\HighlightController;
 use App\Http\Controllers\MeetingController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/run-seeder', function () {
+    try {
+        Artisan::call('db:seed', [
+            '--class' => 'Database\\Seeders\\MeetingSeeder',
+            '--force' => true
+        ]);
+
+        return 'Seeder executed successfully! Output: ' . Artisan::output();
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine();
+    }
+});
 
 Route::inertia('/', 'Welcome')->name('home');
 Route::get('demo/meeting', [MeetingController::class, 'demo'])->name('demo.meeting');
