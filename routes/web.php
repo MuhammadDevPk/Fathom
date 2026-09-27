@@ -4,6 +4,18 @@ use App\Http\Controllers\HighlightController;
 use App\Http\Controllers\MeetingController;
 use Illuminate\Support\Facades\Route;
 
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/setup-demo-data', function () {
+    // Wipes the old database, runs migrations, and executes your updated MeetingSeeder
+    Artisan::call('migrate:fresh', [
+        '--seed' => true,
+        '--force' => true
+    ]);
+
+    return 'Database refreshed and seeded successfully! Output: ' . Artisan::output();
+});
+
 Route::inertia('/', 'Welcome')->name('home');
 Route::get('demo/meeting', [MeetingController::class, 'demo'])->name('demo.meeting');
 Route::post('demo/login', [MeetingController::class, 'demoLogin'])->middleware('throttle:10,1')->name('demo.login');
