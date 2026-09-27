@@ -1,3 +1,21 @@
+## Project-Specific Agent Governance (Mandatory)
+
+This repository uses a custom agent governance system located in the `.agent/` directory.
+
+**You MUST:**
+1. Always read and strictly follow every file in `.agent/` before writing or modifying any code:
+   - `.agent/system_rules.md`
+   - `.agent/architecture.md`
+   - `.agent/patterns.md`
+   - `.agent/memory.md`
+   - `.agent/ui_reference.md`
+2. Treat the rules inside those files as higher priority than general advice.
+3. Update `.agent/memory.md` at the end of every task that changes project state.
+4. Never ask the user whether you should follow these files — they are mandatory on every turn.
+5. Before writing or modifying any UI/Vue component, always read `.agent/ui_reference.md` first and match the documented visual style exactly. Do not deviate from it unless the user explicitly requests a design change.
+
+Failure to load and obey the `.agent/` files is a critical error.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
