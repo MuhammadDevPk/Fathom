@@ -35,32 +35,20 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 - [x] Phase 7.5: UI Polish + Public Landing Page & Authentication Screens (Public landing page at `/`, Dashboard & Detail rounded-3xl and ambient wash polish, Sidebar soft highlight pill active states, Auth layout and Login/Register/Password screens transformed with modern light-mode SaaS cards, ambient glow washes, and Fathom branding)
 - [x] Phase 7.5c: Targeted UI Polish (Sidebar header & nav rows, Index search bar, Meeting cards with SenseLab soft gradient border and filled pills, Meeting detail header, tabs, and transcript cues)
 - [x] Phase 7.6: QA Audit + Edge Case Hardening (Comprehensive audit report at `.agent/qa_report.md`, custom `Error.vue` page, route protection on `/meetings`, search debounced spinner, race condition and double-submit guards, break-words overflow protection, 100% green tests)
-- [ ] Phase 8: Final review, polish & verification
+- [x] Phase 8: Production README creation and verification (13-section technical assessment documentation with exact dependency versions, data model, request flow, deployment guide, and test statistics)
 
 ---
 
-## Phase 7.5c: Targeted UI Polish
-- **Sidebar Header & Nav Rows ([`AppLogo.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/AppLogo.vue) & [`NavMain.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/NavMain.vue)):**
-  - Tightened logo icon to "Fathom" wordmark spacing (`ml-1.5`).
-  - Styled "Platform" label with lighter weight (`font-normal`), increased tracking (`tracking-[0.14em] uppercase`), and increased gap (`mb-2 px-3`).
-  - Transformed nav rows to soft tinted pill background without hard borders (`bg-sky-100/60 font-medium text-sky-800`), matching hover tint (`hover:bg-zinc-100/70`), and aligned icon and label baselines.
-- **Search Bar ([`Meetings/Index.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Meetings/Index.vue)):**
-  - Enhanced to `rounded-2xl` with `shadow-sm`, subtle focus border with sky focus ring (`focus:border-sky-400 focus:ring-4 focus:ring-sky-100 focus:shadow-md`).
-  - Increased vertical padding to `py-4`, enlarged icon to `size-4.5`, muted placeholder (`text-zinc-400/80`), and widened gap between icon and input text (`pl-13`).
-- **Meeting Cards ([`MeetingCard.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/MeetingCard.vue)):**
-  - Integrated SenseLab pricing card inspiration: added subtle low-opacity blue→amber gradient border treatment on hover (`from-sky-400/40 via-indigo-300/25 to-amber-400/40`).
-  - Replaced harsh borders with soft glow shadow (`shadow-sm shadow-slate-200/50 hover:shadow-xl hover:shadow-sky-100/50`).
-  - Converted speaker chips to filled pastel pill backgrounds (`bg-zinc-100/90`, `bg-sky-50/90 text-sky-700`, `bg-purple-50/90 text-purple-700`, `bg-amber-50/90 text-amber-700`).
-  - Enhanced duration badge with soft blue fill, bold weight (`bg-sky-50/90 font-bold px-3.5 py-1.5 text-sky-700`), and no harsh border.
-  - Increased card padding to `p-8 md:p-9`, widened gap between title and chips to `mt-6`, and adjusted hover lift to subtle `-translate-y-0.5` without border color flicker.
-- **Meeting Detail Page ([`Meetings/Show.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Meetings/Show.vue), [`TranscriptList.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/TranscriptList.vue), [`Breadcrumbs.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/Breadcrumbs.vue)):**
-  - Header: Breadcrumbs and back navigation made smaller and muted (`text-[11px] text-zinc-400`) with generous spacing; title enlarged to `text-3xl md:text-4xl font-extrabold tracking-tight`; right meta badges updated to soft filled pills (duration, date, synced media) with zero border-only styling.
-  - Tabs bar: Converted to soft pill container (`rounded-full bg-zinc-100/80 p-1`) with soft pill active triggers (`rounded-full px-3.5 py-1.5 bg-white shadow-xs` with category accent text).
-  - Transcript component: Speaker badges converted to soft filled pastel pills without outlines; timestamp pills given soft blue tint with tightened tracking (`tracking-tight`); increased cue vertical rhythm from `space-y-2` to `space-y-6`; added subtle row hover state with light sky background tint and `border-l-sky-300` accent while maintaining sky-blue active cue styling.
-  - **100% Viewport Height & No-Scroll Architecture:** Sized detail layout to `h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-hidden` with `flex-1 min-h-0` columns; constrained video player (`max-h-[220px] xl:max-h-[250px]`) so both video and executive summary tabs are 100% visible on screen without page scroll; panel contents scroll internally (`overflow-y-auto`).
-  - **Relocated AI Chat to Transcript Panel:** Transferred Ask AI into the right panel tabs alongside Transcript and Highlights (`Transcript`, `Ask AI`, `Highlights`); `AskAiPanel` now occupies 100% of panel height with auto-scrolling conversation flow and sticky footer input.
+## Phase 8: Production Documentation
+- **Production README.md ([`README.md`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/README.md)):**
+  - Formatted across all 13 required sections in order with static badge row and live demo placeholder.
+  - Dependency table matched to exact versions from `composer.json` and `package.json`.
+  - Concrete data model schema and end-to-end request flow ("Ask AI") documented.
+  - Complete local setup, `.env` specifications, and production deployment guide (Nginx + Supervisor worker configuration).
+  - Scope decision placeholder section preserved for human author.
+  - Governance overview referencing all `.agent/` files and `.agent-logs/` transcripts.
 
 ---
 
 ## 4. Current Next Step
-Viewport fitting and AI chat relocation complete. Awaiting user approval.
+Repository documentation complete and 100% test-verified. Ready for assessment submission.
