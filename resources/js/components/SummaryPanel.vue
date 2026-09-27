@@ -2,18 +2,20 @@
 import { router } from '@inertiajs/vue3';
 import {
     AlertCircle,
-    CalendarCheck,
     CheckCircle2,
     Code2,
     FileText,
-    Layers,
     ListTodo,
     RefreshCw,
     Sparkles,
     TrendingUp,
 } from '@lucide/vue';
 import {
-    TabsContent,
+    ScrollAreaCorner,
+    ScrollAreaRoot,
+    ScrollAreaScrollbar,
+    ScrollAreaThumb,
+    ScrollAreaViewport,
     TabsList,
     TabsRoot,
     TabsTrigger,
@@ -192,14 +194,14 @@ function getSectionIconBg(title: string): string {
 </script>
 
 <template>
-    <div class="flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div class="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         <!-- Reka UI Tabs Header & Template Switcher -->
         <TabsRoot
             :model-value="selectedTemplate"
-            class="flex h-full flex-col"
+            class="flex h-full min-h-0 flex-1 flex-col overflow-hidden"
             @update:model-value="handleTabChange"
         >
-            <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-100 pb-3 dark:border-zinc-800">
+            <div class="shrink-0 mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-100 pb-3 dark:border-zinc-800">
                 <div class="flex items-center gap-2.5">
                     <div class="flex size-7 items-center justify-center rounded-lg bg-gradient-to-tr from-sky-500 to-amber-500 text-white shadow-xs">
                         <Sparkles class="size-4" />
@@ -249,7 +251,7 @@ function getSectionIconBg(title: string): string {
                         v-if="meetingId"
                         type="button"
                         :disabled="isReloading"
-                        class="inline-flex size-7 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-800 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+                        class="inline-flex size-7 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-800 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 cursor-pointer"
                         title="Regenerate summary with AI"
                         @click="regenerateSummary"
                     >
@@ -258,111 +260,125 @@ function getSectionIconBg(title: string): string {
                 </div>
             </div>
 
-            <!-- Tab Content Viewport -->
-            <div class="relative flex-1 overflow-y-auto pr-1">
-                <!-- Loading Skeleton (matches .agent/ui_reference.md light mode design) -->
-                <div
-                    v-if="isReloading || summary === null"
-                    class="space-y-4 py-2"
-                >
-                    <div class="flex items-center gap-2 text-xs font-medium text-sky-600 dark:text-sky-400">
-                        <Sparkles class="size-3.5 animate-spin" />
-                        <span>Synthesizing {{ selectedTemplate }} intelligence...</span>
-                    </div>
+            <!-- Tab Content Viewport with Reka UI ScrollArea matching TranscriptList -->
+            <div class="flex-1 min-h-0 overflow-hidden">
+                <ScrollAreaRoot class="relative h-full overflow-hidden" type="auto">
+                    <ScrollAreaViewport class="h-full w-full pr-3.5">
+                        <!-- Loading Skeleton (matches .agent/ui_reference.md light mode design) -->
+                        <div
+                            v-if="isReloading || summary === null"
+                            class="space-y-4 py-2"
+                        >
+                            <div class="flex items-center gap-2 text-xs font-medium text-sky-600 dark:text-sky-400">
+                                <Sparkles class="size-3.5 animate-spin" />
+                                <span>Synthesizing {{ selectedTemplate }} intelligence...</span>
+                            </div>
 
-                    <!-- Skeleton Card 1 -->
-                    <div class="rounded-xl border border-zinc-200/80 bg-zinc-50/70 p-4 space-y-3 dark:border-zinc-800 dark:bg-zinc-800/40">
-                        <div class="flex items-center gap-2">
-                            <div class="size-6 rounded-lg bg-zinc-200/80 animate-pulse dark:bg-zinc-700" />
-                            <div class="h-4 w-40 rounded-md bg-zinc-200/80 animate-pulse dark:bg-zinc-700" />
-                        </div>
-                        <div class="space-y-2 pt-1">
-                            <div class="h-3.5 w-full rounded bg-zinc-200/60 animate-pulse dark:bg-zinc-700/60" />
-                            <div class="h-3.5 w-11/12 rounded bg-zinc-200/60 animate-pulse dark:bg-zinc-700/60" />
-                            <div class="h-3.5 w-4/5 rounded bg-zinc-200/60 animate-pulse dark:bg-zinc-700/60" />
-                        </div>
-                    </div>
+                            <!-- Skeleton Card 1 -->
+                            <div class="rounded-xl border border-zinc-200/80 bg-zinc-50/70 p-4 space-y-3 dark:border-zinc-800 dark:bg-zinc-800/40">
+                                <div class="flex items-center gap-2">
+                                    <div class="size-6 rounded-lg bg-zinc-200/80 animate-pulse dark:bg-zinc-700" />
+                                    <div class="h-4 w-40 rounded-md bg-zinc-200/80 animate-pulse dark:bg-zinc-700" />
+                                </div>
+                                <div class="space-y-2 pt-1">
+                                    <div class="h-3.5 w-full rounded bg-zinc-200/60 animate-pulse dark:bg-zinc-700/60" />
+                                    <div class="h-3.5 w-11/12 rounded bg-zinc-200/60 animate-pulse dark:bg-zinc-700/60" />
+                                    <div class="h-3.5 w-4/5 rounded bg-zinc-200/60 animate-pulse dark:bg-zinc-700/60" />
+                                </div>
+                            </div>
 
-                    <!-- Skeleton Card 2 -->
-                    <div class="rounded-xl border border-zinc-200/80 bg-zinc-50/70 p-4 space-y-3 dark:border-zinc-800 dark:bg-zinc-800/40">
-                        <div class="flex items-center gap-2">
-                            <div class="size-6 rounded-lg bg-zinc-200/80 animate-pulse dark:bg-zinc-700" />
-                            <div class="h-4 w-32 rounded-md bg-zinc-200/80 animate-pulse dark:bg-zinc-700" />
+                            <!-- Skeleton Card 2 -->
+                            <div class="rounded-xl border border-zinc-200/80 bg-zinc-50/70 p-4 space-y-3 dark:border-zinc-800 dark:bg-zinc-800/40">
+                                <div class="flex items-center gap-2">
+                                    <div class="size-6 rounded-lg bg-zinc-200/80 animate-pulse dark:bg-zinc-700" />
+                                    <div class="h-4 w-32 rounded-md bg-zinc-200/80 animate-pulse dark:bg-zinc-700" />
+                                </div>
+                                <div class="space-y-2 pt-1">
+                                    <div class="h-3 w-5/6 rounded bg-zinc-200/60 animate-pulse dark:bg-zinc-700/60" />
+                                    <div class="h-3 w-3/4 rounded bg-zinc-200/60 animate-pulse dark:bg-zinc-700/60" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="space-y-2 pt-1">
-                            <div class="h-3 w-5/6 rounded bg-zinc-200/60 animate-pulse dark:bg-zinc-700/60" />
-                            <div class="h-3 w-3/4 rounded bg-zinc-200/60 animate-pulse dark:bg-zinc-700/60" />
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Polished Card-Based Summary Layout -->
-                <div v-else-if="parsedSections.length > 0" class="space-y-4 pb-2">
-                    <div
-                        v-for="(section, sIndex) in parsedSections"
-                        :key="sIndex"
-                        class="rounded-xl border border-zinc-200/80 bg-zinc-50/50 p-4 transition-all hover:bg-zinc-50 hover:shadow-2xs dark:border-zinc-800 dark:bg-zinc-800/30 dark:hover:bg-zinc-800/50"
+                        <!-- Polished Card-Based Summary Layout -->
+                        <div v-else-if="parsedSections.length > 0" class="space-y-4 pb-2">
+                            <div
+                                v-for="(section, sIndex) in parsedSections"
+                                :key="sIndex"
+                                class="rounded-xl border border-zinc-200/80 bg-zinc-50/50 p-4 transition-all hover:bg-zinc-50 hover:shadow-2xs dark:border-zinc-800 dark:bg-zinc-800/30 dark:hover:bg-zinc-800/50"
+                            >
+                                <!-- Section Header -->
+                                <div class="mb-3 flex items-center gap-2.5">
+                                    <div
+                                        :class="[
+                                            'flex size-6 shrink-0 items-center justify-center rounded-md',
+                                            getSectionIconBg(section.title),
+                                        ]"
+                                    >
+                                        <component :is="getSectionIcon(section.title)" class="size-3.5" />
+                                    </div>
+                                    <h4 class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+                                        {{ section.title }}
+                                    </h4>
+                                </div>
+
+                                <!-- Paragraphs -->
+                                <div
+                                    v-if="section.paragraphs.length > 0"
+                                    class="space-y-2 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300"
+                                >
+                                    <p
+                                        v-for="(para, pIndex) in section.paragraphs"
+                                        :key="pIndex"
+                                        class="whitespace-pre-line"
+                                    >
+                                        {{ para }}
+                                    </p>
+                                </div>
+
+                                <!-- Structured Bullets (Decision items, Action items, etc.) -->
+                                <div
+                                    v-if="section.bullets.length > 0"
+                                    :class="[
+                                        'space-y-2',
+                                        section.paragraphs.length > 0 ? 'mt-3 border-t border-zinc-200/60 pt-3 dark:border-zinc-700/60' : '',
+                                    ]"
+                                >
+                                    <div
+                                        v-for="(bullet, bIndex) in section.bullets"
+                                        :key="bIndex"
+                                        class="flex items-start gap-2.5 text-xs text-zinc-700 dark:text-zinc-300"
+                                    >
+                                        <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-sky-500 dark:bg-sky-400" />
+                                        <span class="leading-relaxed">
+                                            {{ bullet }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div
+                            v-else
+                            class="flex h-40 flex-col items-center justify-center gap-2 text-center text-zinc-400"
+                        >
+                            <FileText class="size-7 text-zinc-300 dark:text-zinc-600" />
+                            <p class="text-sm font-medium">No executive summary available</p>
+                            <p class="text-xs text-zinc-400">Select a template above to generate summary intelligence</p>
+                        </div>
+                    </ScrollAreaViewport>
+
+                    <ScrollAreaScrollbar
+                        class="flex touch-none select-none p-0.5 transition-colors duration-150 ease-out data-[orientation=vertical]:w-2.5"
+                        orientation="vertical"
                     >
-                        <!-- Section Header -->
-                        <div class="mb-3 flex items-center gap-2.5">
-                            <div
-                                :class="[
-                                    'flex size-6 shrink-0 items-center justify-center rounded-md',
-                                    getSectionIconBg(section.title),
-                                ]"
-                            >
-                                <component :is="getSectionIcon(section.title)" class="size-3.5" />
-                            </div>
-                            <h4 class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-                                {{ section.title }}
-                            </h4>
-                        </div>
-
-                        <!-- Paragraphs -->
-                        <div
-                            v-if="section.paragraphs.length > 0"
-                            class="space-y-2 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300"
-                        >
-                            <p
-                                v-for="(para, pIndex) in section.paragraphs"
-                                :key="pIndex"
-                                class="whitespace-pre-line"
-                            >
-                                {{ para }}
-                            </p>
-                        </div>
-
-                        <!-- Structured Bullets (Decision items, Action items, etc.) -->
-                        <div
-                            v-if="section.bullets.length > 0"
-                            :class="[
-                                'space-y-2',
-                                section.paragraphs.length > 0 ? 'mt-3 border-t border-zinc-200/60 pt-3 dark:border-zinc-700/60' : '',
-                            ]"
-                        >
-                            <div
-                                v-for="(bullet, bIndex) in section.bullets"
-                                :key="bIndex"
-                                class="flex items-start gap-2.5 text-xs text-zinc-700 dark:text-zinc-300"
-                            >
-                                <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-sky-500 dark:bg-sky-400" />
-                                <span class="leading-relaxed">
-                                    {{ bullet }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Empty State -->
-                <div
-                    v-else
-                    class="flex h-40 flex-col items-center justify-center gap-2 text-center text-zinc-400"
-                >
-                    <FileText class="size-7 text-zinc-300 dark:text-zinc-600" />
-                    <p class="text-sm font-medium">No executive summary available</p>
-                    <p class="text-xs text-zinc-400">Select a template above to generate summary intelligence</p>
-                </div>
+                        <ScrollAreaThumb
+                            class="relative flex-1 rounded-full bg-zinc-300 transition-colors hover:bg-zinc-400 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+                        />
+                    </ScrollAreaScrollbar>
+                    <ScrollAreaCorner />
+                </ScrollAreaRoot>
             </div>
         </TabsRoot>
     </div>

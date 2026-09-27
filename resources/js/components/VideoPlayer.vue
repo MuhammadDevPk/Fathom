@@ -15,7 +15,7 @@ defineExpose({
 
 <template>
     <div
-        class="relative aspect-video w-full max-h-[220px] xl:max-h-[250px] 2xl:max-h-[280px] overflow-hidden rounded-2xl border border-zinc-200/80 bg-zinc-950 shadow-md dark:border-zinc-800 flex items-center justify-center mx-auto shrink-0"
+        class="relative aspect-video w-full h-[300px] sm:h-[330px] md:h-[360px] lg:h-[340px] xl:h-[385px] 2xl:h-[425px] max-w-full overflow-hidden rounded-2xl border border-zinc-200/80 bg-zinc-950 shadow-md dark:border-zinc-800 flex items-center justify-center mx-auto shrink-0"
     >
         <video
             v-if="src"
@@ -24,7 +24,7 @@ defineExpose({
             controls
             playsinline
             preload="metadata"
-            class="h-full w-full max-h-[220px] xl:max-h-[250px] 2xl:max-h-[280px] object-contain"
+            class="h-full w-full object-contain"
         >
             Your browser does not support the video tag.
         </video>

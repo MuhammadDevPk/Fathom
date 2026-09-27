@@ -199,7 +199,7 @@ const formattedDate = computed(() => {
                         </div>
 
                         <!-- Tab 1: Executive Summary -->
-                        <TabsContent value="summary" class="flex-1 min-h-0 overflow-y-auto focus:outline-none transition-all duration-200">
+                        <TabsContent value="summary" class="flex-1 min-h-0 overflow-hidden focus:outline-none transition-all duration-200">
                             <SummaryPanel
                                 :summary="summary"
                                 :active-template="active_template"
@@ -209,15 +209,15 @@ const formattedDate = computed(() => {
                         </TabsContent>
 
                         <!-- Tab 2: Action Items -->
-                        <TabsContent value="action-items" class="flex-1 min-h-0 overflow-y-auto focus:outline-none transition-all duration-200">
-                            <div class="h-full overflow-y-auto rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+                        <TabsContent value="action-items" class="flex-1 min-h-0 overflow-hidden focus:outline-none transition-all duration-200">
+                            <div class="h-full min-h-0 overflow-y-auto rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
                                 <ActionItemsList :action-items="action_items" />
                             </div>
                         </TabsContent>
 
                         <!-- Tab 3: Highlights -->
-                        <TabsContent value="highlights" class="flex-1 min-h-0 overflow-y-auto focus:outline-none transition-all duration-200">
-                            <div class="h-full overflow-y-auto rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+                        <TabsContent value="highlights" class="flex-1 min-h-0 overflow-hidden focus:outline-none transition-all duration-200">
+                            <div class="h-full min-h-0 overflow-y-auto rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
                                 <HighlightsList
                                     :highlights="highlights"
                                     @seek="seekToTimestamp"

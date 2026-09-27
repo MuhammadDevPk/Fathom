@@ -36,10 +36,11 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 - [x] Phase 7.5c: Targeted UI Polish (Sidebar header & nav rows, Index search bar, Meeting cards with SenseLab soft gradient border and filled pills, Meeting detail header, tabs, and transcript cues)
 - [x] Phase 7.6: QA Audit + Edge Case Hardening (Comprehensive audit report at `.agent/qa_report.md`, custom `Error.vue` page, route protection on `/meetings`, search debounced spinner, race condition and double-submit guards, break-words overflow protection, 100% green tests)
 - [x] Phase 8: Production README creation and verification (13-section technical assessment documentation with exact dependency versions, data model, request flow, deployment guide, and test statistics)
+- [x] Detail & Sidebar Refinements: Video height increased to natural 16:9 cinematic proportions (`h-[300px]` to `h-[425px]`), Summary panel updated with Reka UI `ScrollArea` internal scrolling matching transcript, and removed Repository / Documentation links from sidebar.
 
 ---
 
-## Phase 8: Production Documentation
+## Phase 8: Production Documentation & Polish
 - **Production README.md ([`README.md`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/README.md)):**
   - Formatted across all 13 required sections in order with static badge row and live demo placeholder.
   - Dependency table matched to exact versions from `composer.json` and `package.json`.
@@ -47,8 +48,12 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
   - Complete local setup, `.env` specifications, and production deployment guide (Nginx + Supervisor worker configuration).
   - Scope decision placeholder section preserved for human author.
   - Governance overview referencing all `.agent/` files and `.agent-logs/` transcripts.
+- **Detail View & Navigation Polish:**
+  - Increased video player height (`VideoPlayer.vue`) from `max-h-[220px]` to `h-[300px]` to `h-[425px]` with natural 16:9 proportions, eliminating the squashed/too-wide appearance.
+  - Implemented internal smooth scrolling in `SummaryPanel.vue` via Reka UI `ScrollAreaRoot`, `ScrollAreaViewport`, `ScrollAreaScrollbar`, and `ScrollAreaThumb`, identical to `TranscriptList.vue`.
+  - Removed "Repository" and "Documentation" links from `AppSidebar.vue`.
 
 ---
 
 ## 4. Current Next Step
-Repository documentation complete and 100% test-verified. Ready for assessment submission.
+All visual refinements, internal scrolling, and sidebar link cleanups verified and 100% green. Ready for user presentation.
