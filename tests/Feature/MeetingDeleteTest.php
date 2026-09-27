@@ -8,24 +8,23 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-it('deletes a meeting', function () {
-    $user = User::factory()->create();
-    $meeting = Meeting::factory()->create(['user_id' => $user->id]);
-
-    $response = $this->actingAs($user)->delete(route('meetings.destroy', $meeting));
-
-    expect(Meeting::find($meeting->id))->toBeNull();
-    $response->assertRedirect(route('meetings.index'));
-});
-
-it('forbids deleting another user\'s meeting', function () {
+it('allows any registered user to delete a meeting', function () {
     $owner = User::factory()->create();
     $otherUser = User::factory()->create();
     $meeting = Meeting::factory()->create(['user_id' => $owner->id]);
 
     $response = $this->actingAs($otherUser)->delete(route('meetings.destroy', $meeting));
 
-    $response->assertForbidden();
+    expect(Meeting::find($meeting->id))->toBeNull();
+    $response->assertRedirect(route('meetings.index'));
+});
+
+it('redirects unauthenticated guests when attempting to delete a meeting', function () {
+    $meeting = Meeting::factory()->create();
+
+    $response = $this->delete(route('meetings.destroy', $meeting));
+
+    $response->assertRedirect(route('login'));
     expect(Meeting::find($meeting->id))->not->toBeNull();
 });
 

@@ -63,8 +63,6 @@ class MeetingController extends Controller
      */
     public function destroy(Meeting $meeting): RedirectResponse
     {
-        abort_unless($meeting->user_id === auth()->id(), 403);
-
         $meeting->delete();
 
         return redirect()->route('meetings.index')->with('success', 'Meeting deleted successfully.');
