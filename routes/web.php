@@ -9,7 +9,6 @@ Route::get('/run-seeder', function () {
     try {
         Artisan::call('db:seed', [
             '--class' => 'Database\\Seeders\\MeetingSeeder',
-            '--force' => true,
         ]);
 
         return 'Seeder executed successfully! Output: '.Artisan::output();
