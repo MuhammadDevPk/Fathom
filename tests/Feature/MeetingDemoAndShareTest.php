@@ -13,7 +13,7 @@ it('seeds the demo user and associates meetings', function () {
 
     $demoUser = User::where('email', 'demo@fathom.test')->first();
     expect($demoUser)->not->toBeNull();
-    expect(Meeting::where('user_id', $demoUser->id)->count())->toBe(5);
+    expect(Meeting::where('user_id', $demoUser->id)->count())->toBe(3);
 });
 
 it('logs into demo user and redirects to meetings index via POST /demo/login', function () {

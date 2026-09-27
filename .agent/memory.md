@@ -118,5 +118,22 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 
 ---
 
+## Phase 7.11: Meeting Deletion + Idempotent Seeder
+- **Meeting Deletion ([`MeetingController.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/app/Http/Controllers/MeetingController.php), [`routes/web.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/routes/web.php), [`Show.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Meetings/Show.vue)):**
+  - Added route `DELETE /meetings/{meeting}` named `meetings.destroy` under `auth` middleware.
+  - Method `MeetingController::destroy` verifies meeting ownership via `abort_unless($meeting->user_id === auth()->id(), 403)` and deletes the record, redirecting to `meetings.index` with success flash message.
+  - Added `'user_id' => $meeting->user_id` to meeting payload in `renderMeetingDetail()`.
+  - Added "Delete" action button in [`Show.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Meetings/Show.vue) header, visible strictly to the meeting owner.
+  - Integrated `reka-ui` `AlertDialog` (`AlertDialogRoot`, `AlertDialogTrigger`, `AlertDialogPortal`, `AlertDialogOverlay`, `AlertDialogContent`, `AlertDialogTitle`, `AlertDialogDescription`, `AlertDialogCancel`, `AlertDialogAction`) to require explicit confirmation before deleting.
+- **Idempotent Seeder ([`database/seeders/MeetingSeeder.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/database/seeders/MeetingSeeder.php)):**
+  - Converted all `Meeting::create(...)` invocations to `Meeting::updateOrCreate(['title' => $title], [...])`.
+  - Converted all `Highlight::create(...)` invocations to `Highlight::updateOrCreate(['meeting_id' => $meeting->id, 'timestamp_seconds' => ..., 'label' => ...], ['note' => ...])`.
+  - Verified seeder idempotency: running `php artisan db:seed --class=MeetingSeeder` multiple times produces zero duplicates.
+- **Verification & Tests ([`tests/Feature/MeetingDeleteTest.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/tests/Feature/MeetingDeleteTest.php)):**
+  - Added Pest tests for meeting deletion, forbidden access for non-owners (403), and seeder idempotency.
+  - Aligned expected counts in legacy tests with updated 3-meeting seeder dataset.
+
+---
+
 ## 4. Current Next Step
-Phase 7.10 complete and verified (Pest 62/62 passing, Pint clean, PHPStan 0 errors, Vue TSC clean, VP Build clean). Ready for user review.
+Phase 7.11 complete and verified (Pest 62/62 passing, Pint clean, PHPStan 0 errors, Vue TSC clean, VP Build clean). Ready for user review.

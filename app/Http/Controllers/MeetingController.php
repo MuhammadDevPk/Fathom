@@ -59,6 +59,18 @@ class MeetingController extends Controller
     }
 
     /**
+     * Remove the specified meeting from storage.
+     */
+    public function destroy(Meeting $meeting): RedirectResponse
+    {
+        abort_unless($meeting->user_id === auth()->id(), 403);
+
+        $meeting->delete();
+
+        return redirect()->route('meetings.index')->with('success', 'Meeting deleted successfully.');
+    }
+
+    /**
      * Log in directly as the demo user and redirect to the meetings dashboard.
      */
     public function demoLogin(Request $request): RedirectResponse
@@ -149,6 +161,7 @@ class MeetingController extends Controller
 
         $meetingData = [
             'id' => $meeting->id,
+            'user_id' => $meeting->user_id,
             'title' => $meeting->title,
             'video_url' => $meeting->video_url ?: '/videos/demo1.mp4',
             'duration_seconds' => $meeting->duration_seconds,

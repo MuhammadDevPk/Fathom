@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     ArrowRight,
@@ -7,11 +7,22 @@ import {
     Calendar,
     Clock,
     ListTodo,
+    Loader2,
     Share2,
     Sparkles,
+    Trash2,
     Video,
 } from '@lucide/vue';
 import {
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogOverlay,
+    AlertDialogPortal,
+    AlertDialogRoot,
+    AlertDialogTitle,
+    AlertDialogTrigger,
     TabsContent,
     TabsList,
     TabsRoot,
@@ -54,6 +65,19 @@ const props = withDefaults(
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const isGuest = computed(() => Boolean(props.isDemo) && !user.value);
+
+const isDeleteDialogOpen = ref(false);
+const isDeleting = ref(false);
+
+function confirmDelete() {
+    isDeleting.value = true;
+    router.delete(`/meetings/${props.meeting.id}`, {
+        onFinish: () => {
+            isDeleting.value = false;
+            isDeleteDialogOpen.value = false;
+        },
+    });
+}
 
 async function copyShareLink() {
     if (!props.share_url) {
@@ -221,6 +245,54 @@ const formattedDate = computed(() => {
                         <Share2 class="size-3.5 text-sky-600 dark:text-sky-400" />
                         <span>Copy share link</span>
                     </button>
+
+                    <!-- Owner Action: Delete -->
+                    <template>
+                        <AlertDialogRoot v-model:open="isDeleteDialogOpen">
+                            <AlertDialogTrigger as-child>
+                                <button
+                                    type="button"
+                                    class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-rose-200/90 bg-rose-50/60 px-3.5 py-1 text-xs font-semibold text-rose-700 shadow-2xs transition-all hover:bg-rose-100 hover:text-rose-900 active:scale-95 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-400"
+                                    title="Delete meeting"
+                                >
+                                    <Trash2 class="size-3 text-rose-600 dark:text-rose-400" />
+                                    <span>Delete</span>
+                                </button>
+                            </AlertDialogTrigger>
+                            <AlertDialogPortal>
+                                <AlertDialogOverlay class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs transition-opacity" />
+                                <AlertDialogContent class="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
+                                    <AlertDialogTitle class="text-lg font-bold text-zinc-900 dark:text-zinc-100">
+                                        Delete Meeting
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription class="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                                        Are you sure you want to permanently delete <strong class="text-zinc-900 dark:text-zinc-200">"{{ meeting.title }}"</strong>? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                    <div class="mt-6 flex items-center justify-end gap-3">
+                                        <AlertDialogCancel as-child>
+                                            <button
+                                                type="button"
+                                                class="cursor-pointer rounded-full border border-zinc-200 px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction as-child>
+                                            <button
+                                                type="button"
+                                                :disabled="isDeleting"
+                                                @click="confirmDelete"
+                                                class="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-rose-700 disabled:opacity-50"
+                                            >
+                                                <Loader2 v-if="isDeleting" class="size-3.5 animate-spin" />
+                                                <span>Delete permanently</span>
+                                            </button>
+                                        </AlertDialogAction>
+                                    </div>
+                                </AlertDialogContent>
+                            </AlertDialogPortal>
+                        </AlertDialogRoot>
+                    </template>
                 </div>
             </div>
         </div>

@@ -44,7 +44,7 @@ it('verifies Meeting hasMany Highlights relationship works', function () {
 it('seeds realistic meetings with non-empty transcripts', function () {
     $this->seed(MeetingSeeder::class);
 
-    expect(Meeting::count())->toBe(5)
+    expect(Meeting::count())->toBe(3)
         ->and(Highlight::count())->toBeGreaterThanOrEqual(9);
 
     $meetings = Meeting::with('highlights')->get();

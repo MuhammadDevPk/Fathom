@@ -44,6 +44,7 @@ export interface PaginatedMeetings {
 
 export interface MeetingDetail {
     id: number;
+    user_id?: number | null;
     title: string;
     video_url: string | null;
     duration_seconds: number;

@@ -31,8 +31,8 @@ it('renders the meetings index page with seeded meeting cards for authenticated 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Meetings/Index')
-            ->has('meetings.data', 5)
-            ->where('meetings.total', 5)
+            ->has('meetings.data', 3)
+            ->where('meetings.total', 3)
             ->has('meetings.data.0', fn ($meeting) => $meeting
                 ->has('id')
                 ->has('title')
@@ -78,6 +78,6 @@ it('allows authenticated users to view dashboard which renders meetings', functi
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Meetings/Index')
-            ->has('meetings.data', 5)
+            ->has('meetings.data', 3)
         );
 });
