@@ -11,8 +11,8 @@ import { update } from '@/routes/password';
 
 defineOptions({
     layout: {
-        title: 'Reset password',
-        description: 'Please enter your new password below',
+        title: 'Choose a new password',
+        description: 'Please enter and confirm your new password below',
     },
 });
 
@@ -33,57 +33,81 @@ const inputEmail = ref(props.email);
         :transform="(data) => ({ ...data, token, email })"
         :reset-on-success="['password', 'password_confirmation']"
         v-slot="{ errors, processing }"
+        class="flex flex-col gap-5"
     >
-        <div class="grid gap-6">
-            <div class="grid gap-2">
-                <Label for="email">Email</Label>
+        <div class="grid gap-4">
+            <!-- Email -->
+            <div class="grid gap-1.5">
+                <Label
+                    for="email"
+                    class="text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300"
+                >
+                    Email
+                </Label>
                 <Input
                     id="email"
                     type="email"
                     name="email"
                     autocomplete="email"
                     v-model="inputEmail"
-                    class="mt-1 block w-full"
                     readonly
+                    class="h-11 rounded-xl border-zinc-200/90 bg-zinc-100/70 px-3.5 text-sm text-zinc-500 transition-all duration-200 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-400"
                 />
-                <InputError :message="errors.email" class="mt-2" />
+                <InputError :message="errors.email" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="password">Password</Label>
+            <!-- New Password -->
+            <div class="grid gap-1.5">
+                <Label
+                    for="password"
+                    class="text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300"
+                >
+                    New password
+                </Label>
                 <PasswordInput
                     id="password"
                     name="password"
                     autocomplete="new-password"
-                    class="mt-1 block w-full"
                     autofocus
-                    placeholder="Password"
+                    placeholder="Enter new password"
                     :passwordrules="passwordRules"
+                    class="h-11 rounded-xl border-zinc-200/90 bg-zinc-50/50 px-3.5 text-sm transition-all duration-200 focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/10 dark:border-zinc-800 dark:bg-zinc-900/60 dark:focus:border-sky-500"
                 />
                 <InputError :message="errors.password" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="password_confirmation"> Confirm password </Label>
+            <!-- Confirm New Password -->
+            <div class="grid gap-1.5">
+                <Label
+                    for="password_confirmation"
+                    class="text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300"
+                >
+                    Confirm new password
+                </Label>
                 <PasswordInput
                     id="password_confirmation"
                     name="password_confirmation"
                     autocomplete="new-password"
-                    class="mt-1 block w-full"
-                    placeholder="Confirm password"
+                    placeholder="Repeat new password"
                     :passwordrules="passwordRules"
+                    class="h-11 rounded-xl border-zinc-200/90 bg-zinc-50/50 px-3.5 text-sm transition-all duration-200 focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/10 dark:border-zinc-800 dark:bg-zinc-900/60 dark:focus:border-sky-500"
                 />
                 <InputError :message="errors.password_confirmation" />
             </div>
 
+            <!-- Submit Button -->
             <Button
                 type="submit"
-                class="mt-4 w-full"
+                class="mt-2 h-11 w-full cursor-pointer rounded-xl bg-gradient-to-r from-sky-500 via-sky-600 to-amber-500 text-sm font-semibold text-white shadow-md shadow-sky-500/25 transition-all duration-200 hover:brightness-105 hover:shadow-lg hover:shadow-sky-500/35 active:scale-[0.99] disabled:opacity-60"
                 :disabled="processing"
                 data-test="reset-password-button"
             >
-                <Spinner v-if="processing" />
-                Reset password
+                <Spinner
+                    v-if="processing"
+                    class="mr-2 size-4 animate-spin text-white"
+                />
+                <span v-if="!processing">Reset password</span>
+                <span v-else>Resetting password...</span>
             </Button>
         </div>
     </Form>

@@ -32,19 +32,25 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 - [x] Phase 5: AI Summary + Template Switching (Reka UI Tabs, Inertia v3 deferred props, partial reloads via router.reload, queued GenerateMeetingSummary job with GroqClient and graceful offline fallback)
 - [x] Phase 6: Action Items + Highlights (ActionItemsList with session checkboxes, Reka UI highlight dialog, StoreHighlightRequest validation, side panel & tab list, click-to-seek)
 - [x] Phase 7: Ask AI + Global Search (AskAiPanel with timestamp citations and seek sync, session-based Q&A history, AnswerMeetingQuestion queued job, GroqClient.answerQuestion, debounced live search with scopeSearch)
-- [x] Phase 7.5: UI Polish + Public Landing Page (Public landing page at `/` matching SenseLab visual references, Dashboard & Detail rounded-3xl and ambient wash polish, Sidebar soft highlight pill active states, consistent primary gradient tokens)
+- [x] Phase 7.5: UI Polish + Public Landing Page & Authentication Screens (Public landing page at `/`, Dashboard & Detail rounded-3xl and ambient wash polish, Sidebar soft highlight pill active states, Auth layout and Login/Register/Password screens transformed with modern light-mode SaaS cards, ambient glow washes, and Fathom branding)
 - [ ] Phase 8: Final review, polish & verification
 
 ---
 
-## Phase 7.5: UI Polish & Public Landing Page
+## Phase 7.5: UI Polish & Authentication Redesign
 - **Public Landing Page (`resources/js/pages/Welcome.vue`):** Built a high-converting public landing page for `/` with sticky top nav, hero section with 2-line tight headline and dual CTAs, interactive product preview mockup with floating satellite cards, 3-column features grid, 3-step onboarding flow, and tech stack badges row.
-- **Dashboard Polish (`resources/js/pages/Meetings/Index.vue` & `MeetingCard.vue`):** Added subtle ambient wash with blurred light-mode glow orbs behind the banner, increased card padding to `p-7`/`p-8`, enlarged title contrast, and refined card hover state with subtle lift and soft atmospheric shadow.
-- **Meeting Detail Polish (`resources/js/pages/Meetings/Show.vue` & `VideoPlayer.vue`):** Upgraded video container and panels to `rounded-3xl`, added top ambient gradient wash, refined tabs bar with soft shadow on active tab triggers, and added micro-transitions.
-- **Sidebar Polish (`resources/js/components/NavMain.vue`):** Replaced default active state with a soft highlight pill (`bg-sky-50 text-sky-700 border border-sky-200/70 shadow-2xs`).
-- **Consistency Pass:** Unified Fathom primary gradient (`bg-gradient-fathom`, `text-gradient-fathom`) and standardized all transitions to `duration-200`.
+- **Authentication Screens (`resources/js/layouts/auth/AuthSimpleLayout.vue`, `Login.vue`, `Register.vue`, `ForgotPassword.vue`, `ResetPassword.vue`):**
+  - Completely replaced the plain unstyled starter-kit screens with an elevated SaaS layout.
+  - Added ambient mesh background glow orbs (`sky-200/30` and `amber-200/25` with radial dot matrix).
+  - Floating top navigation bar with a "Back to Fathom" pill button (`ArrowLeft`) and live AI status pill.
+  - Centered brand lockup with Fathom gradient container (`bg-gradient-to-tr from-sky-500 via-sky-600 to-amber-500`) and Sparkles emblem.
+  - Elevated card container with `rounded-3xl border border-zinc-200/80 bg-white/95 p-8 shadow-2xl shadow-slate-200/60 backdrop-blur-md`.
+  - Upgraded inputs to `h-11 rounded-xl` with smooth focus rings (`focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10`).
+  - Styled primary CTA with Fathom's signature gradient pill (`bg-gradient-to-r from-sky-500 via-sky-600 to-amber-500`) with loading spinner.
+  - Added helpful default demo credentials banner (`demo@example.com / password`).
+- **Brand Consistency (`AppLogoIcon.vue`, `AppLogo.vue`):** Replaced the default Laravel polygon SVG with Fathom's signature Sparkles emblem so sidebar, header, and auth layouts are 100% consistently branded.
 
 ---
 
 ## 4. Current Next Step
-Phase 7.5 complete. Awaiting user approval before proceeding to Phase 8.
+Authentication polish complete. Awaiting user review or proceeding to Phase 8 final review.

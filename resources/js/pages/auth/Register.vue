@@ -16,8 +16,8 @@ defineProps<{
 
 defineOptions({
     layout: {
-        title: 'Create an account',
-        description: 'Enter your details below to create your account',
+        title: 'Create your account',
+        description: 'Get started with Fathom AI meeting intelligence',
     },
 });
 </script>
@@ -29,11 +29,17 @@ defineOptions({
         v-bind="store.form()"
         :reset-on-success="['password', 'password_confirmation']"
         v-slot="{ errors, processing }"
-        class="flex flex-col gap-6"
+        class="flex flex-col gap-5"
     >
-        <div class="grid gap-6">
-            <div class="grid gap-2">
-                <Label for="name">Name</Label>
+        <div class="grid gap-4">
+            <!-- Full Name -->
+            <div class="grid gap-1.5">
+                <Label
+                    for="name"
+                    class="text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300"
+                >
+                    Full name
+                </Label>
                 <Input
                     id="name"
                     type="text"
@@ -42,13 +48,20 @@ defineOptions({
                     :tabindex="1"
                     autocomplete="name"
                     name="name"
-                    placeholder="Full name"
+                    placeholder="Alex Chen"
+                    class="h-11 rounded-xl border-zinc-200/90 bg-zinc-50/50 px-3.5 text-sm transition-all duration-200 focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/10 dark:border-zinc-800 dark:bg-zinc-900/60 dark:focus:border-sky-500"
                 />
                 <InputError :message="errors.name" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="email">Email address</Label>
+            <!-- Email Address -->
+            <div class="grid gap-1.5">
+                <Label
+                    for="email"
+                    class="text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300"
+                >
+                    Work email
+                </Label>
                 <Input
                     id="email"
                     type="email"
@@ -56,59 +69,87 @@ defineOptions({
                     :tabindex="2"
                     autocomplete="email"
                     name="email"
-                    placeholder="email@example.com"
+                    placeholder="you@company.com"
+                    class="h-11 rounded-xl border-zinc-200/90 bg-zinc-50/50 px-3.5 text-sm transition-all duration-200 focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/10 dark:border-zinc-800 dark:bg-zinc-900/60 dark:focus:border-sky-500"
                 />
                 <InputError :message="errors.email" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="password">Password</Label>
+            <!-- Password -->
+            <div class="grid gap-1.5">
+                <Label
+                    for="password"
+                    class="text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300"
+                >
+                    Password
+                </Label>
                 <PasswordInput
                     id="password"
                     required
                     :tabindex="3"
                     autocomplete="new-password"
                     name="password"
-                    placeholder="Password"
+                    placeholder="Create a strong password"
                     :passwordrules="passwordRules"
+                    class="h-11 rounded-xl border-zinc-200/90 bg-zinc-50/50 px-3.5 text-sm transition-all duration-200 focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/10 dark:border-zinc-800 dark:bg-zinc-900/60 dark:focus:border-sky-500"
                 />
                 <InputError :message="errors.password" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="password_confirmation">Confirm password</Label>
+            <!-- Confirm Password -->
+            <div class="grid gap-1.5">
+                <Label
+                    for="password_confirmation"
+                    class="text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300"
+                >
+                    Confirm password
+                </Label>
                 <PasswordInput
                     id="password_confirmation"
                     required
                     :tabindex="4"
                     autocomplete="new-password"
                     name="password_confirmation"
-                    placeholder="Confirm password"
+                    placeholder="Repeat your password"
                     :passwordrules="passwordRules"
+                    class="h-11 rounded-xl border-zinc-200/90 bg-zinc-50/50 px-3.5 text-sm transition-all duration-200 focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/10 dark:border-zinc-800 dark:bg-zinc-900/60 dark:focus:border-sky-500"
                 />
                 <InputError :message="errors.password_confirmation" />
             </div>
 
+            <!-- Submit Button -->
             <Button
                 type="submit"
-                class="mt-2 w-full"
+                class="mt-2 h-11 w-full cursor-pointer rounded-xl bg-gradient-to-r from-sky-500 via-sky-600 to-amber-500 text-sm font-semibold text-white shadow-md shadow-sky-500/25 transition-all duration-200 hover:brightness-105 hover:shadow-lg hover:shadow-sky-500/35 active:scale-[0.99] disabled:opacity-60"
                 tabindex="5"
                 :disabled="processing"
                 data-test="register-user-button"
             >
-                <Spinner v-if="processing" />
-                Create account
+                <Spinner
+                    v-if="processing"
+                    class="mr-2 size-4 animate-spin text-white"
+                />
+                <span v-if="!processing">Create account</span>
+                <span v-else>Creating account...</span>
             </Button>
         </div>
 
-        <div class="text-center text-sm text-muted-foreground">
+        <!-- Privacy note -->
+        <p class="text-center text-[11px] text-zinc-500 dark:text-zinc-400">
+            By creating an account, you agree to our Terms of Service and
+            Privacy Policy.
+        </p>
+
+        <!-- Switch Link -->
+        <div class="text-center text-xs text-zinc-500 dark:text-zinc-400">
             Already have an account?
             <TextLink
                 :href="login()"
-                class="underline underline-offset-4"
+                class="ml-1 font-semibold text-sky-600 underline underline-offset-4 hover:text-sky-700 dark:text-sky-400"
                 :tabindex="6"
-                >Log in</TextLink
             >
+                Log in
+            </TextLink>
         </div>
     </Form>
 </template>
