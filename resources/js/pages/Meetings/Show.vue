@@ -1,19 +1,44 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { ArrowLeft, Calendar, Clock, Video } from '@lucide/vue';
+import {
+    ArrowLeft,
+    Bookmark,
+    Calendar,
+    Clock,
+    ListTodo,
+    Sparkles,
+    Video,
+} from '@lucide/vue';
+import {
+    TabsContent,
+    TabsList,
+    TabsRoot,
+    TabsTrigger,
+} from 'reka-ui';
 import { computed, ref } from 'vue';
+import ActionItemsList from '@/components/ActionItemsList.vue';
+import HighlightsList from '@/components/HighlightsList.vue';
 import SummaryPanel from '@/components/SummaryPanel.vue';
 import TranscriptList from '@/components/TranscriptList.vue';
 import VideoPlayer from '@/components/VideoPlayer.vue';
 import { useTranscriptSync } from '@/composables/useTranscriptSync';
-import type { MeetingDetail, TranscriptCue } from '@/types';
+import type { ActionItem, HighlightItem, MeetingDetail, TranscriptCue } from '@/types';
 
-const props = defineProps<{
-    meeting: MeetingDetail;
-    transcript: TranscriptCue[];
-    summary: string | null;
-    active_template?: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        meeting: MeetingDetail;
+        transcript: TranscriptCue[];
+        summary: string | null;
+        active_template?: string;
+        highlights?: HighlightItem[];
+        action_items?: ActionItem[];
+    }>(),
+    {
+        active_template: 'general',
+        highlights: () => [],
+        action_items: () => [],
+    },
+);
 
 const videoPlayerRef = ref<InstanceType<typeof VideoPlayer> | null>(null);
 
@@ -21,6 +46,16 @@ const { activeCueIndex, seekToCue } = useTranscriptSync(
     computed(() => videoPlayerRef.value?.videoElement ?? null),
     () => props.transcript,
 );
+
+function seekToTimestamp(seconds: number) {
+    const el = videoPlayerRef.value?.videoElement;
+    if (el) {
+        el.currentTime = seconds;
+        el.play().catch(() => {});
+    }
+}
+
+const activePanelTab = ref('summary');
 
 defineOptions({
     layout: {
@@ -109,33 +144,94 @@ const formattedDate = computed(() => {
         </div>
 
         <!-- Three-Panel Layout:
-             Left Column: Video (Top Left) + Summary (Bottom Left, below video)
-             Right Column: Transcript (Right)
+             Left Column: Video (Top Left) + Intelligence Tabs (Bottom Left, below video)
+             Right Column: Transcript & Highlights Side Panel (Right)
         -->
         <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
-            <!-- Left Column: Video + Summary -->
+            <!-- Left Column: Video + Intelligence Tabs -->
             <div class="flex flex-col gap-6 lg:col-span-7">
                 <!-- Video Player (Top Left) -->
                 <div>
                     <VideoPlayer ref="videoPlayerRef" :src="meeting.video_url" />
                 </div>
 
-                <!-- Executive Summary (Bottom Left, below video) -->
-                <div class="min-h-[340px]">
-                    <SummaryPanel
-                        :summary="summary"
-                        :active-template="active_template"
-                        :meeting-id="meeting.id"
-                    />
+                <!-- Intelligence Tabs (Bottom Left, below video) -->
+                <div class="min-h-[380px]">
+                    <TabsRoot v-model="activePanelTab" class="flex flex-col">
+                        <!-- Top Navigation Tabs -->
+                        <div class="mb-3 flex items-center justify-between border-b border-zinc-200/80 pb-2.5 dark:border-zinc-800">
+                            <TabsList class="inline-flex rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800">
+                                <TabsTrigger
+                                    value="summary"
+                                    class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-xs dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
+                                >
+                                    <Sparkles class="size-3.5 text-sky-500" />
+                                    <span>Summary</span>
+                                </TabsTrigger>
+
+                                <TabsTrigger
+                                    value="action-items"
+                                    class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-xs dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
+                                >
+                                    <ListTodo class="size-3.5 text-amber-500" />
+                                    <span>Action Items</span>
+                                    <span class="rounded-full bg-amber-100 px-1.5 py-0.2 text-[10px] text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                                        {{ action_items.length }}
+                                    </span>
+                                </TabsTrigger>
+
+                                <TabsTrigger
+                                    value="highlights"
+                                    class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-xs dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
+                                >
+                                    <Bookmark class="size-3.5 text-indigo-500" />
+                                    <span>Highlights</span>
+                                    <span class="rounded-full bg-indigo-100 px-1.5 py-0.2 text-[10px] text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
+                                        {{ highlights.length }}
+                                    </span>
+                                </TabsTrigger>
+                            </TabsList>
+                        </div>
+
+                        <!-- Tab 1: Executive Summary -->
+                        <TabsContent value="summary" class="focus:outline-none">
+                            <SummaryPanel
+                                :summary="summary"
+                                :active-template="active_template"
+                                :meeting-id="meeting.id"
+                            />
+                        </TabsContent>
+
+                        <!-- Tab 2: Action Items -->
+                        <TabsContent value="action-items" class="focus:outline-none">
+                            <div class="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                                <ActionItemsList :action-items="action_items" />
+                            </div>
+                        </TabsContent>
+
+                        <!-- Tab 3: Highlights -->
+                        <TabsContent value="highlights" class="focus:outline-none">
+                            <div class="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                                <HighlightsList
+                                    :highlights="highlights"
+                                    @seek="seekToTimestamp"
+                                />
+                            </div>
+                        </TabsContent>
+                    </TabsRoot>
                 </div>
             </div>
 
-            <!-- Right Column: Transcript (Right) -->
+            <!-- Right Column: Transcript & Highlights Side Panel -->
             <div class="h-[600px] lg:col-span-5 lg:h-[calc(100vh-13rem)] lg:min-h-[640px]">
                 <TranscriptList
                     :cues="transcript"
                     :active-cue-index="activeCueIndex"
+                    :meeting-id="meeting.id"
+                    :meeting-duration="meeting.duration_seconds"
+                    :highlights="highlights"
                     @select-cue="seekToCue"
+                    @seek="seekToTimestamp"
                 />
             </div>
         </div>

@@ -59,6 +59,8 @@ class MeetingController extends Controller
             'transcript' => $meeting->transcript ?? [],
             'active_template' => $template,
             'summary' => Inertia::defer(fn () => $meeting->getSummaryForTemplate($template)),
+            'highlights' => $meeting->highlights()->orderBy('timestamp_seconds')->get(['id', 'meeting_id', 'timestamp_seconds', 'label', 'note']),
+            'action_items' => $meeting->action_items ?? [],
         ]);
     }
 
