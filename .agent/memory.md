@@ -33,20 +33,32 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 - [x] Phase 6: Action Items + Highlights (ActionItemsList with session checkboxes, Reka UI highlight dialog, StoreHighlightRequest validation, side panel & tab list, click-to-seek)
 - [x] Phase 7: Ask AI + Global Search (AskAiPanel with timestamp citations and seek sync, session-based Q&A history, AnswerMeetingQuestion queued job, GroqClient.answerQuestion, debounced live search with scopeSearch)
 - [x] Phase 7.5: UI Polish + Public Landing Page & Authentication Screens (Public landing page at `/`, Dashboard & Detail rounded-3xl and ambient wash polish, Sidebar soft highlight pill active states, Auth layout and Login/Register/Password screens transformed with modern light-mode SaaS cards, ambient glow washes, and Fathom branding)
+- [x] Phase 7.5c: Targeted UI Polish (Sidebar header & nav rows, Index search bar, Meeting cards with SenseLab soft gradient border and filled pills, Meeting detail header, tabs, and transcript cues)
 - [x] Phase 7.6: QA Audit + Edge Case Hardening (Comprehensive audit report at `.agent/qa_report.md`, custom `Error.vue` page, route protection on `/meetings`, search debounced spinner, race condition and double-submit guards, break-words overflow protection, 100% green tests)
 - [ ] Phase 8: Final review, polish & verification
 
 ---
 
-## Phase 7.6: QA Audit & Edge Case Hardening
-- **Comprehensive Quality Audit ([`.agent/qa_report.md`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/.agent/qa_report.md)):** Audited Error States, Loading States, Empty States, Auth End-to-End, Edge Cases, and Console/Terminal Hygiene.
-- **Custom Error Page ([`resources/js/pages/Error.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Error.vue)):** Created light-mode error page matching `.agent/ui_reference.md` and configured exception handler in `bootstrap/app.php` for 403, 404, 500, 503.
-- **Route Protection & Guest Redirection ([`routes/web.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/routes/web.php)):** Guarded `/meetings` and meeting intelligence routes with `auth` middleware; verified unauthenticated guests redirect to `/login` while `/` remains public.
-- **Search Feedback ([`resources/js/pages/Meetings/Index.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Meetings/Index.vue)):** Added animated `Loader2` spinner during debounced search reloads and grid opacity transition.
-- **Race Condition & Submission Hardening ([`SummaryPanel.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/SummaryPanel.vue) & [`AskAiPanel.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/AskAiPanel.vue)):** Added guards against rapid template clicking and Enter-key double-submits.
-- **Validation Toast & Timestamp Error ([`TranscriptList.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/TranscriptList.vue)):** Bound `timestamp_seconds` validation error in highlight dialog and integrated `vue-sonner` toasts.
+## Phase 7.5c: Targeted UI Polish
+- **Sidebar Header & Nav Rows ([`AppLogo.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/AppLogo.vue) & [`NavMain.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/NavMain.vue)):**
+  - Tightened logo icon to "Fathom" wordmark spacing (`ml-1.5`).
+  - Styled "Platform" label with lighter weight (`font-normal`), increased tracking (`tracking-[0.14em] uppercase`), and increased gap (`mb-2 px-3`).
+  - Transformed nav rows to soft tinted pill background without hard borders (`bg-sky-100/60 font-medium text-sky-800`), matching hover tint (`hover:bg-zinc-100/70`), and aligned icon and label baselines.
+- **Search Bar ([`Meetings/Index.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Meetings/Index.vue)):**
+  - Enhanced to `rounded-2xl` with `shadow-sm`, subtle focus border with sky focus ring (`focus:border-sky-400 focus:ring-4 focus:ring-sky-100 focus:shadow-md`).
+  - Increased vertical padding to `py-4`, enlarged icon to `size-4.5`, muted placeholder (`text-zinc-400/80`), and widened gap between icon and input text (`pl-13`).
+- **Meeting Cards ([`MeetingCard.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/MeetingCard.vue)):**
+  - Integrated SenseLab pricing card inspiration: added subtle low-opacity blue→amber gradient border treatment on hover (`from-sky-400/40 via-indigo-300/25 to-amber-400/40`).
+  - Replaced harsh borders with soft glow shadow (`shadow-sm shadow-slate-200/50 hover:shadow-xl hover:shadow-sky-100/50`).
+  - Converted speaker chips to filled pastel pill backgrounds (`bg-zinc-100/90`, `bg-sky-50/90 text-sky-700`, `bg-purple-50/90 text-purple-700`, `bg-amber-50/90 text-amber-700`).
+  - Enhanced duration badge with soft blue fill, bold weight (`bg-sky-50/90 font-bold px-3.5 py-1.5 text-sky-700`), and no harsh border.
+  - Increased card padding to `p-8 md:p-9`, widened gap between title and chips to `mt-6`, and adjusted hover lift to subtle `-translate-y-0.5` without border color flicker.
+- **Meeting Detail Page ([`Meetings/Show.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Meetings/Show.vue), [`TranscriptList.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/TranscriptList.vue), [`Breadcrumbs.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/Breadcrumbs.vue)):**
+  - Header: Breadcrumbs and back navigation made smaller and muted (`text-[11px] text-zinc-400`) with generous spacing; title enlarged to `text-3xl md:text-4xl font-extrabold tracking-tight`; right meta badges updated to soft filled pills (duration, date, synced media) with zero border-only styling.
+  - Tabs bar: Converted to soft pill container (`rounded-full bg-zinc-100/80 p-1`) with soft pill active triggers (`rounded-full px-3.5 py-1.5 bg-white shadow-xs` with category accent text).
+  - Transcript component: Speaker badges converted to soft filled pastel pills without outlines; timestamp pills given soft blue tint with tightened tracking (`tracking-tight`); increased cue vertical rhythm from `space-y-2` to `space-y-6`; added subtle row hover state with light sky background tint and `border-l-sky-300` accent while maintaining sky-blue active cue styling.
 
 ---
 
 ## 4. Current Next Step
-Phase 7.6 complete. Awaiting user approval before proceeding to Phase 8 final review.
+Phase 7.5c complete. Awaiting user approval.

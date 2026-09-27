@@ -85,24 +85,24 @@ defineOptions({
         <!-- Global Search Bar -->
         <div class="relative">
             <div class="relative flex items-center">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400">
-                    <Loader2 v-if="isSearching" class="size-4 animate-spin text-sky-500" />
-                    <Search v-else class="size-4" />
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-5 text-zinc-400">
+                    <Loader2 v-if="isSearching" class="size-4.5 animate-spin text-sky-500" />
+                    <Search v-else class="size-4.5" />
                 </div>
                 <input
                     v-model="searchTerm"
                     type="text"
                     placeholder="Search meetings by title, speaker dialogue, or keywords..."
-                    class="w-full rounded-2xl border border-zinc-200/90 bg-white py-3.5 pl-11 pr-11 text-xs text-zinc-900 shadow-2xs transition-all duration-200 placeholder:text-zinc-400 focus:border-sky-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:ring-sky-950/50"
+                    class="w-full rounded-2xl border border-zinc-200/80 bg-white py-4 pl-13 pr-12 text-sm text-zinc-900 shadow-sm transition-all duration-200 placeholder:text-zinc-400/80 hover:shadow-md focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-sky-100 focus:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:ring-sky-950/50"
                 />
                 <button
                     v-if="searchTerm"
                     type="button"
-                    class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
+                    class="absolute inset-y-0 right-0 flex items-center pr-4 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
                     title="Clear search"
                     @click="clearSearch"
                 >
-                    <X class="size-4" />
+                    <X class="size-4.5" />
                 </button>
             </div>
         </div>

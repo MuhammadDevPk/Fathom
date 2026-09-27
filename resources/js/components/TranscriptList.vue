@@ -117,24 +117,24 @@ function formatTime(seconds: number): string {
 }
 
 const speakerColors: Record<string, string> = {
-    'Alex Chen': 'bg-sky-50 text-sky-700 border-sky-200/70 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/60',
-    'Maya Patel': 'bg-purple-50 text-purple-700 border-purple-200/70 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/60',
-    'Marcus Brody': 'bg-emerald-50 text-emerald-700 border-emerald-200/70 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60',
-    'Elena Rostova': 'bg-amber-50 text-amber-700 border-amber-200/70 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60',
-    'Sarah Jenkins': 'bg-pink-50 text-pink-700 border-pink-200/70 dark:bg-pink-950/40 dark:text-pink-300 dark:border-pink-800/60',
-    'David Kim': 'bg-indigo-50 text-indigo-700 border-indigo-200/70 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800/60',
-    'Rachel Adams': 'bg-rose-50 text-rose-700 border-rose-200/70 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/60',
-    'Jordan Miller': 'bg-blue-50 text-blue-700 border-blue-200/70 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60',
-    'Samantha Wu': 'bg-teal-50 text-teal-700 border-teal-200/70 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-800/60',
-    'Devante Washington': 'bg-violet-50 text-violet-700 border-violet-200/70 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-800/60',
-    'Priya Sharma': 'bg-orange-50 text-orange-700 border-orange-200/70 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60',
-    'Liam O\'Connor': 'bg-cyan-50 text-cyan-700 border-cyan-200/70 dark:bg-cyan-950/40 dark:text-cyan-300 dark:border-cyan-800/60',
-    'Carlos Gomez': 'bg-lime-50 text-lime-700 border-lime-200/70 dark:bg-lime-950/40 dark:text-lime-300 dark:border-lime-800/60',
-    'Thomas Wright': 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200/70 dark:bg-fuchsia-950/40 dark:text-fuchsia-300 dark:border-fuchsia-800/60',
+    'Alex Chen': 'bg-sky-100/80 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300',
+    'Maya Patel': 'bg-purple-100/80 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300',
+    'Marcus Brody': 'bg-emerald-100/80 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
+    'Elena Rostova': 'bg-amber-100/80 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300',
+    'Sarah Jenkins': 'bg-pink-100/80 text-pink-800 dark:bg-pink-950/60 dark:text-pink-300',
+    'David Kim': 'bg-indigo-100/80 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300',
+    'Rachel Adams': 'bg-rose-100/80 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300',
+    'Jordan Miller': 'bg-blue-100/80 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300',
+    'Samantha Wu': 'bg-teal-100/80 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300',
+    'Devante Washington': 'bg-violet-100/80 text-violet-800 dark:bg-violet-950/60 dark:text-violet-300',
+    'Priya Sharma': 'bg-orange-100/80 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300',
+    'Liam O\'Connor': 'bg-cyan-100/80 text-cyan-800 dark:bg-cyan-950/60 dark:text-cyan-300',
+    'Carlos Gomez': 'bg-lime-100/80 text-lime-800 dark:bg-lime-950/60 dark:text-lime-300',
+    'Thomas Wright': 'bg-fuchsia-100/80 text-fuchsia-800 dark:bg-fuchsia-950/60 dark:text-fuchsia-300',
 };
 
 function getSpeakerBadgeClass(speaker: string): string {
-    return speakerColors[speaker] || 'bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700';
+    return speakerColors[speaker] || 'bg-zinc-100/90 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200';
 }
 </script>
 
@@ -142,34 +142,34 @@ function getSpeakerBadgeClass(speaker: string): string {
     <div class="flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
         <!-- Header with View Toggle -->
         <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3.5 dark:border-zinc-800">
-            <div class="inline-flex rounded-xl bg-zinc-100/90 p-1 dark:bg-zinc-800">
+            <div class="inline-flex rounded-full bg-zinc-100/80 p-1 dark:bg-zinc-800">
                 <button
                     type="button"
                     :class="[
-                        'rounded-lg px-3 py-1 text-xs font-semibold transition-all cursor-pointer',
+                        'rounded-full px-3.5 py-1 text-xs font-semibold transition-all cursor-pointer',
                         activeTab === 'transcript'
-                            ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-700 dark:text-zinc-100'
+                            ? 'bg-white text-sky-700 shadow-xs dark:bg-zinc-700 dark:text-sky-300'
                             : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200',
                     ]"
                     @click="activeTab = 'transcript'"
                 >
                     Transcript
-                    <span class="ml-1 rounded-full bg-zinc-200/70 px-1.5 py-0.2 text-[10px] text-zinc-700 dark:bg-zinc-600 dark:text-zinc-200">
+                    <span class="ml-1 rounded-full bg-sky-100/80 px-1.5 py-0.2 text-[10px] font-semibold text-sky-700 dark:bg-sky-950 dark:text-sky-300">
                         {{ cues.length }}
                     </span>
                 </button>
                 <button
                     type="button"
                     :class="[
-                        'rounded-lg px-3 py-1 text-xs font-semibold transition-all cursor-pointer',
+                        'rounded-full px-3.5 py-1 text-xs font-semibold transition-all cursor-pointer',
                         activeTab === 'highlights'
-                            ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-700 dark:text-zinc-100'
+                            ? 'bg-white text-indigo-700 shadow-xs dark:bg-zinc-700 dark:text-indigo-300'
                             : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200',
                     ]"
                     @click="activeTab = 'highlights'"
                 >
                     Highlights
-                    <span class="ml-1 rounded-full bg-sky-100 px-1.5 py-0.2 text-[10px] text-sky-700 dark:bg-sky-950 dark:text-sky-300">
+                    <span class="ml-1 rounded-full bg-indigo-100/80 px-1.5 py-0.2 text-[10px] font-semibold text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">
                         {{ highlights.length }}
                     </span>
                 </button>
@@ -184,26 +184,26 @@ function getSpeakerBadgeClass(speaker: string): string {
         <div v-if="activeTab === 'transcript'" class="flex-1 overflow-hidden">
             <ScrollAreaRoot class="relative h-full overflow-hidden" type="auto">
                 <ScrollAreaViewport class="h-full w-full p-4">
-                    <div v-if="cues.length > 0" class="space-y-2">
+                    <div v-if="cues.length > 0" class="space-y-6">
                         <div
                             v-for="(cue, index) in cues"
                             :key="index"
                             :ref="(el) => setCueRef(el, index)"
                             :class="[
-                                'group relative flex cursor-pointer items-start gap-3 rounded-xl p-3 transition-all duration-200 border-l-4',
+                                'group relative flex cursor-pointer items-start gap-3 rounded-xl p-3.5 transition-all duration-200 border-l-4',
                                 index === activeCueIndex
                                     ? 'border-l-sky-500 bg-sky-50/90 shadow-xs dark:border-l-sky-400 dark:bg-sky-950/40'
-                                    : 'border-l-transparent hover:bg-zinc-50/80 dark:hover:bg-zinc-800/50',
+                                    : 'border-l-transparent hover:border-l-sky-300 hover:bg-sky-50/25 dark:hover:border-l-sky-700 dark:hover:bg-sky-950/20',
                             ]"
                             @click="emit('select-cue', cue, index)"
                         >
                             <!-- Timestamp Badge -->
                             <span
                                 :class="[
-                                    'inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1 font-mono text-xs font-medium transition-colors',
+                                    'inline-flex shrink-0 items-center gap-1 rounded-lg px-2.5 py-1 font-mono text-xs tracking-tight transition-colors',
                                     index === activeCueIndex
-                                        ? 'border border-sky-500 bg-sky-600 text-white font-semibold shadow-xs'
-                                        : 'border border-zinc-200/70 bg-zinc-50 text-zinc-500 group-hover:border-sky-300 group-hover:text-sky-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:group-hover:text-sky-400',
+                                        ? 'bg-sky-600 text-white font-bold shadow-xs'
+                                        : 'bg-sky-50/90 text-sky-700 font-medium group-hover:bg-sky-100 group-hover:text-sky-800 dark:bg-sky-950/60 dark:text-sky-300',
                                 ]"
                             >
                                 <Clock class="size-3" />
@@ -216,7 +216,7 @@ function getSpeakerBadgeClass(speaker: string): string {
                                     <div class="flex items-center gap-2">
                                         <span
                                             :class="[
-                                                'inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium',
+                                                'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold',
                                                 getSpeakerBadgeClass(cue.speaker),
                                             ]"
                                         >

@@ -8,7 +8,7 @@ import { Sparkles } from '@lucide/vue';
     >
         <Sparkles class="size-4.5" />
     </div>
-    <div class="ml-2.5 grid flex-1 text-left text-sm">
+    <div class="ml-1.5 grid flex-1 text-left text-sm">
         <span class="truncate leading-tight font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100">Fathom</span>
     </div>
 </template>
