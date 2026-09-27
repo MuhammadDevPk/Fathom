@@ -32,9 +32,19 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 - [x] Phase 5: AI Summary + Template Switching (Reka UI Tabs, Inertia v3 deferred props, partial reloads via router.reload, queued GenerateMeetingSummary job with GroqClient and graceful offline fallback)
 - [x] Phase 6: Action Items + Highlights (ActionItemsList with session checkboxes, Reka UI highlight dialog, StoreHighlightRequest validation, side panel & tab list, click-to-seek)
 - [x] Phase 7: Ask AI + Global Search (AskAiPanel with timestamp citations and seek sync, session-based Q&A history, AnswerMeetingQuestion queued job, GroqClient.answerQuestion, debounced live search with scopeSearch)
-- [ ] Phase 8: Global dashboard search and listing view (Refinements, final polish & verification)
+- [x] Phase 7.5: UI Polish + Public Landing Page (Public landing page at `/` matching SenseLab visual references, Dashboard & Detail rounded-3xl and ambient wash polish, Sidebar soft highlight pill active states, consistent primary gradient tokens)
+- [ ] Phase 8: Final review, polish & verification
+
+---
+
+## Phase 7.5: UI Polish & Public Landing Page
+- **Public Landing Page (`resources/js/pages/Welcome.vue`):** Built a high-converting public landing page for `/` with sticky top nav, hero section with 2-line tight headline and dual CTAs, interactive product preview mockup with floating satellite cards, 3-column features grid, 3-step onboarding flow, and tech stack badges row.
+- **Dashboard Polish (`resources/js/pages/Meetings/Index.vue` & `MeetingCard.vue`):** Added subtle ambient wash with blurred light-mode glow orbs behind the banner, increased card padding to `p-7`/`p-8`, enlarged title contrast, and refined card hover state with subtle lift and soft atmospheric shadow.
+- **Meeting Detail Polish (`resources/js/pages/Meetings/Show.vue` & `VideoPlayer.vue`):** Upgraded video container and panels to `rounded-3xl`, added top ambient gradient wash, refined tabs bar with soft shadow on active tab triggers, and added micro-transitions.
+- **Sidebar Polish (`resources/js/components/NavMain.vue`):** Replaced default active state with a soft highlight pill (`bg-sky-50 text-sky-700 border border-sky-200/70 shadow-2xs`).
+- **Consistency Pass:** Unified Fathom primary gradient (`bg-gradient-fathom`, `text-gradient-fathom`) and standardized all transitions to `duration-200`.
 
 ---
 
 ## 4. Current Next Step
-Phase 7 complete. Awaiting user approval before proceeding to Phase 8.
+Phase 7.5 complete. Awaiting user approval before proceeding to Phase 8.

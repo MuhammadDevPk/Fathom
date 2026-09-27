@@ -47,25 +47,29 @@ defineOptions({
 <template>
     <Head title="Meetings - Fathom" />
 
-    <div class="flex flex-1 flex-col gap-6 p-6 md:p-8">
-        <!-- Header Banner with Light-Mode Ambient Glow -->
-        <div class="relative overflow-hidden rounded-3xl border border-zinc-200/80 bg-gradient-to-br from-white via-sky-50/30 to-amber-50/20 p-6 shadow-sm md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
-            <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+    <div class="flex flex-1 flex-col gap-8 p-6 md:p-10">
+        <!-- Header Banner with Light-Mode Ambient Glow Wash -->
+        <div class="relative overflow-hidden rounded-3xl border border-zinc-200/80 bg-gradient-to-br from-white via-sky-50/40 to-amber-50/25 p-8 md:p-10 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <!-- Subtle Ambient Background Glow Orbs -->
+            <div class="pointer-events-none absolute -right-16 -top-16 size-72 rounded-full bg-sky-200/25 blur-3xl dark:bg-sky-900/20" />
+            <div class="pointer-events-none absolute -bottom-16 -left-16 size-72 rounded-full bg-amber-200/20 blur-3xl dark:bg-amber-900/15" />
+
+            <div class="relative flex flex-col justify-between gap-5 md:flex-row md:items-center">
                 <div>
-                    <div class="mb-2 inline-flex items-center gap-1.5 rounded-full border border-sky-200/60 bg-sky-50 px-3 py-0.5 text-xs font-medium text-sky-700 dark:border-sky-800/60 dark:bg-sky-950/40 dark:text-sky-300">
+                    <div class="mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-sky-200/70 bg-sky-50/80 px-3 py-0.5 text-xs font-semibold text-sky-700 shadow-2xs dark:border-sky-800/60 dark:bg-sky-950/40 dark:text-sky-300">
                         <Sparkles class="size-3.5" />
                         AI Meeting Intelligence
                     </div>
-                    <h1 class="text-2xl font-bold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-100">
+                    <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900 md:text-4xl dark:text-zinc-100">
                         Meetings
                     </h1>
-                    <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                        Select a meeting to review the synchronized transcript, video playback, and AI executive summary.
+                    <p class="mt-1.5 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                        Select a meeting to review synchronized transcripts, video playback, and AI executive summaries.
                     </p>
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <span class="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200/80 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 shadow-xs dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                    <span class="inline-flex items-center gap-1.5 rounded-2xl border border-zinc-200/80 bg-white/90 px-4 py-2 font-mono text-xs font-semibold text-zinc-700 shadow-xs backdrop-blur-xs dark:border-zinc-700 dark:bg-zinc-800/90 dark:text-zinc-300">
                         <Video class="size-3.5 text-sky-500" />
                         {{ meetings.total }} Total Meetings
                     </span>
@@ -83,7 +87,7 @@ defineOptions({
                     v-model="searchTerm"
                     type="text"
                     placeholder="Search meetings by title, speaker dialogue, or keywords..."
-                    class="w-full rounded-2xl border border-zinc-200/90 bg-white py-3 pl-11 pr-10 text-xs text-zinc-900 shadow-2xs transition-all placeholder:text-zinc-400 focus:border-sky-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:ring-sky-950/50"
+                    class="w-full rounded-2xl border border-zinc-200/90 bg-white py-3.5 pl-11 pr-11 text-xs text-zinc-900 shadow-2xs transition-all duration-200 placeholder:text-zinc-400 focus:border-sky-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:ring-sky-950/50"
                 />
                 <button
                     v-if="searchTerm"
@@ -100,7 +104,7 @@ defineOptions({
         <!-- Meeting Cards Grid -->
         <div
             v-if="meetings.data.length > 0"
-            class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
         >
             <MeetingCard
                 v-for="meeting in meetings.data"

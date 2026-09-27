@@ -15,7 +15,7 @@ defineExpose({
 
 <template>
     <div
-        class="relative aspect-video w-full overflow-hidden rounded-2xl border border-zinc-200/80 bg-zinc-950 shadow-md dark:border-zinc-800"
+        class="relative aspect-video w-full overflow-hidden rounded-3xl border border-zinc-200/80 bg-zinc-950 shadow-xl dark:border-zinc-800"
     >
         <video
             v-if="src"

@@ -105,13 +105,13 @@ const formattedDate = computed(() => {
 <template>
     <Head :title="`${meeting.title} - Fathom`" />
 
-    <div class="flex flex-1 flex-col gap-6 p-6 md:p-8">
+    <div class="relative flex flex-1 flex-col gap-8 p-6 md:p-10 bg-gradient-to-b from-sky-50/30 via-transparent to-transparent">
         <!-- Top Nav & Meeting Title Header -->
-        <div class="flex flex-col gap-3 border-b border-zinc-200/80 pb-5 dark:border-zinc-800">
+        <div class="flex flex-col gap-3.5 border-b border-zinc-200/80 pb-6 dark:border-zinc-800">
             <div>
                 <Link
                     href="/meetings"
-                    class="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 transition-colors hover:text-sky-600 dark:text-zinc-400 dark:hover:text-sky-400"
+                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 transition-colors duration-200 hover:text-sky-600 dark:text-zinc-400 dark:hover:text-sky-400"
                 >
                     <ArrowLeft class="size-3.5" />
                     Back to all meetings
@@ -119,14 +119,14 @@ const formattedDate = computed(() => {
             </div>
 
             <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                <h1 class="text-xl font-bold tracking-tight text-zinc-900 md:text-2xl dark:text-zinc-100">
+                <h1 class="text-2xl font-extrabold tracking-tight text-zinc-900 md:text-3xl dark:text-zinc-100">
                     {{ meeting.title }}
                 </h1>
 
                 <!-- Meta Pills -->
                 <div class="flex flex-wrap items-center gap-2">
                     <span
-                        class="inline-flex items-center gap-1.5 rounded-full border border-sky-200/70 bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700 dark:border-sky-800/60 dark:bg-sky-950/40 dark:text-sky-300"
+                        class="inline-flex items-center gap-1.5 rounded-full border border-sky-200/70 bg-sky-50 px-3 py-1 font-mono text-xs font-semibold text-sky-700 shadow-2xs dark:border-sky-800/60 dark:bg-sky-950/40 dark:text-sky-300"
                     >
                         <Clock class="size-3.5" />
                         {{ formattedDuration }}
@@ -134,14 +134,14 @@ const formattedDate = computed(() => {
 
                     <span
                         v-if="formattedDate"
-                        class="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                        class="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/80 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
                     >
                         <Calendar class="size-3.5 text-zinc-400" />
                         {{ formattedDate }}
                     </span>
 
                     <span
-                        class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/70 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-300"
+                        class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/70 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 shadow-2xs dark:border-emerald-800/60 dark:bg-emerald-950/40 dark:text-emerald-300"
                     >
                         <Video class="size-3.5" />
                         Synced Media
@@ -154,9 +154,9 @@ const formattedDate = computed(() => {
              Left Column: Video (Top Left) + Intelligence Tabs (Bottom Left, below video)
              Right Column: Transcript & Highlights Side Panel (Right)
         -->
-        <div class="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
             <!-- Left Column: Video + Intelligence Tabs -->
-            <div class="flex flex-col gap-6 lg:col-span-7">
+            <div class="flex flex-col gap-8 lg:col-span-7">
                 <!-- Video Player (Top Left) -->
                 <div>
                     <VideoPlayer ref="videoPlayerRef" :src="meeting.video_url" />
@@ -166,11 +166,11 @@ const formattedDate = computed(() => {
                 <div class="min-h-[380px]">
                     <TabsRoot v-model="activePanelTab" class="flex flex-col">
                         <!-- Top Navigation Tabs -->
-                        <div class="mb-3 flex items-center justify-between border-b border-zinc-200/80 pb-2.5 dark:border-zinc-800">
-                            <TabsList class="inline-flex rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800">
+                        <div class="mb-4 flex items-center justify-between border-b border-zinc-200/80 pb-3 dark:border-zinc-800">
+                            <TabsList class="inline-flex rounded-2xl bg-zinc-100/90 p-1.5 border border-zinc-200/60 dark:bg-zinc-800 dark:border-zinc-700/60">
                                 <TabsTrigger
                                     value="summary"
-                                    class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-xs dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
+                                    class="flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-semibold text-zinc-500 transition-all duration-200 cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-zinc-200/50 dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
                                 >
                                     <Sparkles class="size-3.5 text-sky-500" />
                                     <span>Summary</span>
@@ -178,7 +178,7 @@ const formattedDate = computed(() => {
 
                                 <TabsTrigger
                                     value="action-items"
-                                    class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-xs dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
+                                    class="flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-semibold text-zinc-500 transition-all duration-200 cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-zinc-200/50 dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
                                 >
                                     <ListTodo class="size-3.5 text-amber-500" />
                                     <span>Action Items</span>
@@ -189,7 +189,7 @@ const formattedDate = computed(() => {
 
                                 <TabsTrigger
                                     value="highlights"
-                                    class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-xs dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
+                                    class="flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-semibold text-zinc-500 transition-all duration-200 cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-zinc-200/50 dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
                                 >
                                     <Bookmark class="size-3.5 text-indigo-500" />
                                     <span>Highlights</span>
@@ -200,7 +200,7 @@ const formattedDate = computed(() => {
 
                                 <TabsTrigger
                                     value="ask-ai"
-                                    class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-xs dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
+                                    class="flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-semibold text-zinc-500 transition-all duration-200 cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-zinc-200/50 dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
                                 >
                                     <Bot class="size-3.5 text-sky-500" />
                                     <span>Ask AI</span>
@@ -215,7 +215,7 @@ const formattedDate = computed(() => {
                         </div>
 
                         <!-- Tab 1: Executive Summary -->
-                        <TabsContent value="summary" class="focus:outline-none">
+                        <TabsContent value="summary" class="focus:outline-none transition-all duration-200">
                             <SummaryPanel
                                 :summary="summary"
                                 :active-template="active_template"
@@ -224,15 +224,15 @@ const formattedDate = computed(() => {
                         </TabsContent>
 
                         <!-- Tab 2: Action Items -->
-                        <TabsContent value="action-items" class="focus:outline-none">
-                            <div class="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                        <TabsContent value="action-items" class="focus:outline-none transition-all duration-200">
+                            <div class="rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
                                 <ActionItemsList :action-items="action_items" />
                             </div>
                         </TabsContent>
 
                         <!-- Tab 3: Highlights -->
-                        <TabsContent value="highlights" class="focus:outline-none">
-                            <div class="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                        <TabsContent value="highlights" class="focus:outline-none transition-all duration-200">
+                            <div class="rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
                                 <HighlightsList
                                     :highlights="highlights"
                                     @seek="seekToTimestamp"
@@ -241,7 +241,7 @@ const formattedDate = computed(() => {
                         </TabsContent>
 
                         <!-- Tab 4: Ask AI Assistant -->
-                        <TabsContent value="ask-ai" class="focus:outline-none">
+                        <TabsContent value="ask-ai" class="focus:outline-none transition-all duration-200">
                             <AskAiPanel
                                 :meeting-id="meeting.id"
                                 :qa-history="qa_history"

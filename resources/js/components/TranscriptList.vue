@@ -133,7 +133,7 @@ function getSpeakerBadgeClass(speaker: string): string {
 </script>
 
 <template>
-    <div class="flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div class="flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
         <!-- Header with View Toggle -->
         <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3.5 dark:border-zinc-800">
             <div class="inline-flex rounded-xl bg-zinc-100/90 p-1 dark:bg-zinc-800">
