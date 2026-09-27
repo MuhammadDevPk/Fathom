@@ -135,24 +135,24 @@ const quickPrompts = [
 </script>
 
 <template>
-    <div class="flex h-[520px] flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div class="flex h-full min-h-0 flex-col overflow-hidden bg-white dark:bg-zinc-900">
         <!-- Header -->
-        <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3.5 dark:border-zinc-800">
+        <div class="flex shrink-0 items-center justify-between border-b border-zinc-100 px-4 py-2.5 dark:border-zinc-800">
             <div class="flex items-center gap-2">
-                <div class="flex size-7 items-center justify-center rounded-lg bg-gradient-to-tr from-sky-500 to-amber-500 text-white shadow-xs">
-                    <Sparkles class="size-4" />
+                <div class="flex size-6 items-center justify-center rounded-lg bg-gradient-to-tr from-sky-500 to-amber-500 text-white shadow-xs">
+                    <Sparkles class="size-3.5" />
                 </div>
                 <div>
                     <h3 class="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
                         Ask Fathom AI
                     </h3>
-                    <p class="text-[11px] text-zinc-400">
+                    <p class="text-[10px] text-zinc-400">
                         Answers with timestamp video citations
                     </p>
                 </div>
             </div>
 
-            <span class="rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-medium text-sky-700 border border-sky-200/70 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/60">
+            <span class="rounded-full bg-sky-50 px-2 py-0.5 text-[10px] font-medium text-sky-700 border border-sky-200/70 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/60">
                 {{ qaHistory.length }} {{ qaHistory.length === 1 ? 'Question' : 'Questions' }}
             </span>
         </div>
@@ -160,7 +160,7 @@ const quickPrompts = [
         <!-- Chat History Scroll Container -->
         <div
             ref="chatContainerRef"
-            class="flex-1 space-y-4 overflow-y-auto p-4 md:p-5"
+            class="flex-1 min-h-0 space-y-4 overflow-y-auto p-4"
         >
             <!-- Empty State / Welcome Guide -->
             <div
@@ -267,7 +267,7 @@ const quickPrompts = [
         </div>
 
         <!-- Input Bar Footer -->
-        <div class="border-t border-zinc-100 p-3.5 dark:border-zinc-800">
+        <div class="shrink-0 border-t border-zinc-100 p-3 dark:border-zinc-800">
             <form class="flex items-center gap-2" @submit.prevent="submitQuestion()">
                 <div class="relative flex-1">
                     <input

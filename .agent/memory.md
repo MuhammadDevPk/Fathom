@@ -57,8 +57,10 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
   - Header: Breadcrumbs and back navigation made smaller and muted (`text-[11px] text-zinc-400`) with generous spacing; title enlarged to `text-3xl md:text-4xl font-extrabold tracking-tight`; right meta badges updated to soft filled pills (duration, date, synced media) with zero border-only styling.
   - Tabs bar: Converted to soft pill container (`rounded-full bg-zinc-100/80 p-1`) with soft pill active triggers (`rounded-full px-3.5 py-1.5 bg-white shadow-xs` with category accent text).
   - Transcript component: Speaker badges converted to soft filled pastel pills without outlines; timestamp pills given soft blue tint with tightened tracking (`tracking-tight`); increased cue vertical rhythm from `space-y-2` to `space-y-6`; added subtle row hover state with light sky background tint and `border-l-sky-300` accent while maintaining sky-blue active cue styling.
+  - **100% Viewport Height & No-Scroll Architecture:** Sized detail layout to `h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-hidden` with `flex-1 min-h-0` columns; constrained video player (`max-h-[220px] xl:max-h-[250px]`) so both video and executive summary tabs are 100% visible on screen without page scroll; panel contents scroll internally (`overflow-y-auto`).
+  - **Relocated AI Chat to Transcript Panel:** Transferred Ask AI into the right panel tabs alongside Transcript and Highlights (`Transcript`, `Ask AI`, `Highlights`); `AskAiPanel` now occupies 100% of panel height with auto-scrolling conversation flow and sticky footer input.
 
 ---
 
 ## 4. Current Next Step
-Phase 7.5c complete. Awaiting user approval.
+Viewport fitting and AI chat relocation complete. Awaiting user approval.

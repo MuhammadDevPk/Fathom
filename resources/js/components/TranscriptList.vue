@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { Bookmark, BookmarkPlus, Clock, Sparkles } from '@lucide/vue';
+import { Bookmark, BookmarkPlus, Bot, Clock, Sparkles } from '@lucide/vue';
 import {
     ScrollAreaCorner,
     ScrollAreaRoot,
@@ -10,6 +10,7 @@ import {
 } from 'reka-ui';
 import { ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
+import AskAiPanel from '@/components/AskAiPanel.vue';
 import HighlightsList from '@/components/HighlightsList.vue';
 import {
     Dialog,
@@ -20,7 +21,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import type { HighlightItem, TranscriptCue } from '@/types';
+import type { HighlightItem, QaItem, TranscriptCue } from '@/types';
 
 const props = withDefaults(
     defineProps<{
@@ -29,12 +30,14 @@ const props = withDefaults(
         meetingId?: number;
         meetingDuration?: number;
         highlights?: HighlightItem[];
+        qaHistory?: QaItem[];
     }>(),
     {
         activeCueIndex: -1,
         meetingId: undefined,
         meetingDuration: 0,
         highlights: () => [],
+        qaHistory: () => [],
     },
 );
 
@@ -43,7 +46,7 @@ const emit = defineEmits<{
     (e: 'seek', seconds: number): void;
 }>();
 
-const activeTab = ref<'transcript' | 'highlights'>('transcript');
+const activeTab = ref<'transcript' | 'ask-ai' | 'highlights'>('transcript');
 const isHighlightDialogOpen = ref(false);
 const activeBookmarkCue = ref<TranscriptCue | null>(null);
 
@@ -141,12 +144,12 @@ function getSpeakerBadgeClass(speaker: string): string {
 <template>
     <div class="flex h-full flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
         <!-- Header with View Toggle -->
-        <div class="flex items-center justify-between border-b border-zinc-100 px-5 py-3.5 dark:border-zinc-800">
+        <div class="flex items-center justify-between border-b border-zinc-100 px-4 py-2.5 dark:border-zinc-800 shrink-0">
             <div class="inline-flex rounded-full bg-zinc-100/80 p-1 dark:bg-zinc-800">
                 <button
                     type="button"
                     :class="[
-                        'rounded-full px-3.5 py-1 text-xs font-semibold transition-all cursor-pointer',
+                        'rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer',
                         activeTab === 'transcript'
                             ? 'bg-white text-sky-700 shadow-xs dark:bg-zinc-700 dark:text-sky-300'
                             : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200',
@@ -161,7 +164,26 @@ function getSpeakerBadgeClass(speaker: string): string {
                 <button
                     type="button"
                     :class="[
-                        'rounded-full px-3.5 py-1 text-xs font-semibold transition-all cursor-pointer',
+                        'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer',
+                        activeTab === 'ask-ai'
+                            ? 'bg-white text-sky-700 shadow-xs dark:bg-zinc-700 dark:text-sky-300'
+                            : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200',
+                    ]"
+                    @click="activeTab = 'ask-ai'"
+                >
+                    <Bot class="size-3 text-sky-500" />
+                    <span>Ask AI</span>
+                    <span
+                        v-if="qaHistory.length > 0"
+                        class="rounded-full bg-sky-100/80 px-1.5 py-0.2 text-[10px] font-semibold text-sky-700 dark:bg-sky-950 dark:text-sky-300"
+                    >
+                        {{ qaHistory.length }}
+                    </span>
+                </button>
+                <button
+                    type="button"
+                    :class="[
+                        'rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer',
                         activeTab === 'highlights'
                             ? 'bg-white text-indigo-700 shadow-xs dark:bg-zinc-700 dark:text-indigo-300'
                             : 'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200',
@@ -175,8 +197,8 @@ function getSpeakerBadgeClass(speaker: string): string {
                 </button>
             </div>
 
-            <div class="text-xs text-zinc-400">
-                {{ activeTab === 'transcript' ? 'Click cue to jump video' : 'Click bookmark to seek' }}
+            <div class="hidden sm:block text-[11px] text-zinc-400">
+                {{ activeTab === 'transcript' ? 'Click cue to jump video' : activeTab === 'ask-ai' ? 'Ask AI copilot' : 'Click bookmark to seek' }}
             </div>
         </div>
 
@@ -275,8 +297,24 @@ function getSpeakerBadgeClass(speaker: string): string {
             </ScrollAreaRoot>
         </div>
 
-        <!-- Tab 2: Highlights Side Panel View -->
-        <div v-else class="flex-1 overflow-y-auto p-4">
+        <!-- Tab 2: Ask AI Copilot -->
+        <div v-else-if="activeTab === 'ask-ai'" class="flex-1 min-h-0 overflow-hidden">
+            <AskAiPanel
+                v-if="meetingId"
+                :meeting-id="meetingId"
+                :qa-history="qaHistory"
+                @seek="emit('seek', $event)"
+            />
+            <div
+                v-else
+                class="flex h-48 flex-col items-center justify-center p-6 text-center text-zinc-400"
+            >
+                <p class="text-sm">Meeting ID is required for AI queries.</p>
+            </div>
+        </div>
+
+        <!-- Tab 3: Highlights Side Panel View -->
+        <div v-else class="flex-1 min-h-0 overflow-y-auto p-4">
             <HighlightsList
                 :highlights="highlights"
                 @seek="emit('seek', $event)"

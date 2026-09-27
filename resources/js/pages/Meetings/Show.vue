@@ -3,7 +3,6 @@ import { Head, Link } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     Bookmark,
-    Bot,
     Calendar,
     Clock,
     ListTodo,
@@ -18,7 +17,6 @@ import {
 } from 'reka-ui';
 import { computed, ref } from 'vue';
 import ActionItemsList from '@/components/ActionItemsList.vue';
-import AskAiPanel from '@/components/AskAiPanel.vue';
 import HighlightsList from '@/components/HighlightsList.vue';
 import SummaryPanel from '@/components/SummaryPanel.vue';
 import TranscriptList from '@/components/TranscriptList.vue';
@@ -105,10 +103,10 @@ const formattedDate = computed(() => {
 <template>
     <Head :title="`${meeting.title} - Fathom`" />
 
-    <div class="relative flex flex-1 flex-col gap-8 p-6 md:p-10 bg-gradient-to-b from-sky-50/30 via-transparent to-transparent">
+    <div class="relative flex flex-1 flex-col h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-hidden p-4 md:p-5 lg:p-6 bg-gradient-to-b from-sky-50/30 via-transparent to-transparent">
         <!-- Top Nav & Meeting Title Header -->
-        <div class="flex flex-col gap-4 border-b border-zinc-200/80 pb-6 dark:border-zinc-800">
-            <div class="mb-1">
+        <div class="flex shrink-0 flex-col gap-2 border-b border-zinc-200/80 pb-3 dark:border-zinc-800">
+            <div>
                 <Link
                     href="/meetings"
                     class="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-400 transition-colors duration-200 hover:text-sky-600 dark:text-zinc-500 dark:hover:text-sky-400"
@@ -118,13 +116,13 @@ const formattedDate = computed(() => {
                 </Link>
             </div>
 
-            <div class="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                <h1 class="text-3xl font-extrabold tracking-tight text-zinc-900 md:text-4xl leading-tight dark:text-zinc-100">
+            <div class="flex flex-col justify-between gap-3 md:flex-row md:items-center">
+                <h1 class="text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-zinc-900 leading-snug truncate dark:text-zinc-100">
                     {{ meeting.title }}
                 </h1>
 
                 <!-- Meta Pills -->
-                <div class="flex flex-wrap items-center gap-2">
+                <div class="flex shrink-0 flex-wrap items-center gap-2">
                     <span
                         class="inline-flex items-center gap-1.5 rounded-full bg-sky-50/90 px-3.5 py-1 font-mono text-xs font-bold text-sky-700 dark:bg-sky-950/60 dark:text-sky-300"
                     >
@@ -152,21 +150,21 @@ const formattedDate = computed(() => {
 
         <!-- Three-Panel Layout:
              Left Column: Video (Top Left) + Intelligence Tabs (Bottom Left, below video)
-             Right Column: Transcript & Highlights Side Panel (Right)
+             Right Column: Transcript, Ask AI & Highlights Side Panel (Right)
         -->
-        <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+        <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-5 overflow-hidden pt-1">
             <!-- Left Column: Video + Intelligence Tabs -->
-            <div class="flex flex-col gap-8 lg:col-span-7">
+            <div class="flex flex-col h-full min-h-0 gap-3.5 lg:col-span-7 overflow-hidden">
                 <!-- Video Player (Top Left) -->
-                <div>
+                <div class="shrink-0 flex items-center justify-center">
                     <VideoPlayer ref="videoPlayerRef" :src="meeting.video_url" />
                 </div>
 
                 <!-- Intelligence Tabs (Bottom Left, below video) -->
-                <div class="min-h-[380px]">
-                    <TabsRoot v-model="activePanelTab" class="flex flex-col">
+                <div class="flex-1 min-h-0 flex flex-col overflow-hidden">
+                    <TabsRoot v-model="activePanelTab" class="flex h-full min-h-0 flex-col overflow-hidden">
                         <!-- Top Navigation Tabs -->
-                        <div class="mb-4 flex items-center justify-between border-b border-zinc-200/80 pb-3 dark:border-zinc-800">
+                        <div class="shrink-0 mb-2 flex items-center justify-between border-b border-zinc-200/80 pb-2 dark:border-zinc-800">
                             <TabsList class="inline-flex rounded-full bg-zinc-100/80 p-1 dark:bg-zinc-800/80">
                                 <TabsTrigger
                                     value="summary"
@@ -197,69 +195,48 @@ const formattedDate = computed(() => {
                                         {{ highlights.length }}
                                     </span>
                                 </TabsTrigger>
-
-                                <TabsTrigger
-                                    value="ask-ai"
-                                    class="flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold text-zinc-500 transition-all duration-200 cursor-pointer data-[state=active]:bg-white data-[state=active]:text-sky-700 data-[state=active]:shadow-xs dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-sky-300"
-                                >
-                                    <Bot class="size-3.5 text-sky-500" />
-                                    <span>Ask AI</span>
-                                    <span
-                                        v-if="qa_history.length > 0"
-                                        class="rounded-full bg-sky-100/80 px-1.5 py-0.2 text-[10px] text-sky-700 dark:bg-sky-950 dark:text-sky-300"
-                                    >
-                                        {{ qa_history.length }}
-                                    </span>
-                                </TabsTrigger>
                             </TabsList>
                         </div>
 
                         <!-- Tab 1: Executive Summary -->
-                        <TabsContent value="summary" class="focus:outline-none transition-all duration-200">
+                        <TabsContent value="summary" class="flex-1 min-h-0 overflow-y-auto focus:outline-none transition-all duration-200">
                             <SummaryPanel
                                 :summary="summary"
                                 :active-template="active_template"
                                 :meeting-id="meeting.id"
+                                class="h-full"
                             />
                         </TabsContent>
 
                         <!-- Tab 2: Action Items -->
-                        <TabsContent value="action-items" class="focus:outline-none transition-all duration-200">
-                            <div class="rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+                        <TabsContent value="action-items" class="flex-1 min-h-0 overflow-y-auto focus:outline-none transition-all duration-200">
+                            <div class="h-full overflow-y-auto rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
                                 <ActionItemsList :action-items="action_items" />
                             </div>
                         </TabsContent>
 
                         <!-- Tab 3: Highlights -->
-                        <TabsContent value="highlights" class="focus:outline-none transition-all duration-200">
-                            <div class="rounded-3xl border border-zinc-200/80 bg-white p-6 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+                        <TabsContent value="highlights" class="flex-1 min-h-0 overflow-y-auto focus:outline-none transition-all duration-200">
+                            <div class="h-full overflow-y-auto rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
                                 <HighlightsList
                                     :highlights="highlights"
                                     @seek="seekToTimestamp"
                                 />
                             </div>
                         </TabsContent>
-
-                        <!-- Tab 4: Ask AI Assistant -->
-                        <TabsContent value="ask-ai" class="focus:outline-none transition-all duration-200">
-                            <AskAiPanel
-                                :meeting-id="meeting.id"
-                                :qa-history="qa_history"
-                                @seek="seekToTimestamp"
-                            />
-                        </TabsContent>
                     </TabsRoot>
                 </div>
             </div>
 
-            <!-- Right Column: Transcript & Highlights Side Panel -->
-            <div class="h-[600px] lg:col-span-5 lg:h-[calc(100vh-13rem)] lg:min-h-[640px]">
+            <!-- Right Column: Transcript, Ask AI & Highlights Side Panel -->
+            <div class="h-full min-h-0 lg:col-span-5 flex flex-col overflow-hidden">
                 <TranscriptList
                     :cues="transcript"
                     :active-cue-index="activeCueIndex"
                     :meeting-id="meeting.id"
                     :meeting-duration="meeting.duration_seconds"
                     :highlights="highlights"
+                    :qa-history="qa_history"
                     @select-cue="seekToCue"
                     @seek="seekToTimestamp"
                 />
