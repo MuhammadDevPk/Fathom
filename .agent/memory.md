@@ -28,7 +28,7 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 - [x] Phase 1: Realistic 5-meeting multi-speaker seeders with rich transcripts, decisions, and action items
 - [x] Phase 2: Backend Controller, Routes & Meeting Data Pipeline (Index & Show routes, thin controller, pagination)
 - [x] Phase 3: Detail layout with 3-panel structure (HTML5 video top-left, summary bottom-left, transcript right)
-- [ ] Phase 4: Video-to-transcript playback synchronization (click-to-seek, active cue highlighting, and AI summary template switching)
+- [x] Phase 4: Video-to-transcript playback synchronization (click-to-seek, active cue highlighting, smooth auto-scroll, useTranscriptSync composable, spacebar play/pause shortcut)
 - [ ] Phase 5: Action Items checklist with status toggles and assignee attribution
 - [ ] Phase 6: Meeting Q&A assistant tab with time-stamped video citations
 - [ ] Phase 7: Global dashboard search and listing view
@@ -36,4 +36,4 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 ---
 
 ## 4. Current Next Step
-Awaiting user approval on Phase 2 + 3 completion before proceeding to Phase 4.
+Awaiting user approval on Phase 4 completion before proceeding to Phase 5.

@@ -7,11 +7,45 @@ import {
     ScrollAreaThumb,
     ScrollAreaViewport,
 } from 'reka-ui';
+import { ref, watch } from 'vue';
 import type { TranscriptCue } from '@/types';
 
-defineProps<{
-    cues: TranscriptCue[];
+const props = withDefaults(
+    defineProps<{
+        cues: TranscriptCue[];
+        activeCueIndex?: number;
+    }>(),
+    {
+        activeCueIndex: -1,
+    },
+);
+
+const emit = defineEmits<{
+    (e: 'select-cue', cue: TranscriptCue, index: number): void;
 }>();
+
+const cueElements = ref<Record<number, HTMLElement>>({});
+
+function setCueRef(el: unknown, index: number) {
+    if (el && typeof el === 'object' && '$el' in el) {
+        cueElements.value[index] = (el as { $el: HTMLElement }).$el;
+    } else if (el instanceof HTMLElement) {
+        cueElements.value[index] = el;
+    }
+}
+
+watch(
+    () => props.activeCueIndex,
+    (newIndex) => {
+        if (typeof newIndex === 'number' && newIndex >= 0 && cueElements.value[newIndex]) {
+            cueElements.value[newIndex].scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+                inline: 'nearest',
+            });
+        }
+    },
+);
 
 function formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60);
@@ -53,6 +87,9 @@ function getSpeakerBadgeClass(speaker: string): string {
                     {{ cues.length }} cues
                 </span>
             </div>
+            <div class="text-xs text-zinc-400">
+                Click cue to jump video
+            </div>
         </div>
 
         <!-- Scrollable Cues Container with Reka UI ScrollArea -->
@@ -62,11 +99,23 @@ function getSpeakerBadgeClass(speaker: string): string {
                     <div
                         v-for="(cue, index) in cues"
                         :key="index"
-                        class="group flex cursor-pointer items-start gap-3 rounded-xl p-3 transition-colors hover:bg-zinc-50/80 dark:hover:bg-zinc-800/50"
+                        :ref="(el) => setCueRef(el, index)"
+                        :class="[
+                            'group flex cursor-pointer items-start gap-3 rounded-xl p-3 transition-all duration-200 border-l-4',
+                            index === activeCueIndex
+                                ? 'border-l-sky-500 bg-sky-50/90 shadow-xs dark:border-l-sky-400 dark:bg-sky-950/40'
+                                : 'border-l-transparent hover:bg-zinc-50/80 dark:hover:bg-zinc-800/50',
+                        ]"
+                        @click="emit('select-cue', cue, index)"
                     >
                         <!-- Timestamp Badge -->
                         <span
-                            class="inline-flex shrink-0 items-center gap-1 rounded-md border border-zinc-200/70 bg-zinc-50 px-2 py-1 font-mono text-xs font-medium text-zinc-500 transition-colors group-hover:border-sky-300 group-hover:text-sky-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:group-hover:text-sky-400"
+                            :class="[
+                                'inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1 font-mono text-xs font-medium transition-colors',
+                                index === activeCueIndex
+                                    ? 'border border-sky-500 bg-sky-600 text-white font-semibold shadow-xs'
+                                    : 'border border-zinc-200/70 bg-zinc-50 text-zinc-500 group-hover:border-sky-300 group-hover:text-sky-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:group-hover:text-sky-400',
+                            ]"
                         >
                             <Clock class="size-3" />
                             {{ formatTime(cue.start) }}
@@ -83,8 +132,20 @@ function getSpeakerBadgeClass(speaker: string): string {
                                 >
                                     {{ cue.speaker }}
                                 </span>
+                                <span
+                                    v-if="index === activeCueIndex"
+                                    class="inline-flex size-1.5 rounded-full bg-sky-500 animate-pulse"
+                                    title="Active Dialogue"
+                                />
                             </div>
-                            <p class="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                            <p
+                                :class="[
+                                    'text-sm leading-relaxed transition-colors',
+                                    index === activeCueIndex
+                                        ? 'font-medium text-zinc-900 dark:text-zinc-50'
+                                        : 'text-zinc-700 dark:text-zinc-300',
+                                ]"
+                            >
                                 {{ cue.text }}
                             </p>
                         </div>

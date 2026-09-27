@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft, Calendar, Clock, Video } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import SummaryPanel from '@/components/SummaryPanel.vue';
 import TranscriptList from '@/components/TranscriptList.vue';
 import VideoPlayer from '@/components/VideoPlayer.vue';
+import { useTranscriptSync } from '@/composables/useTranscriptSync';
 import type { MeetingDetail, TranscriptCue } from '@/types';
 
 const props = defineProps<{
@@ -12,6 +13,13 @@ const props = defineProps<{
     transcript: TranscriptCue[];
     summary: string | null;
 }>();
+
+const videoPlayerRef = ref<InstanceType<typeof VideoPlayer> | null>(null);
+
+const { activeCueIndex, seekToCue } = useTranscriptSync(
+    computed(() => videoPlayerRef.value?.videoElement ?? null),
+    () => props.transcript,
+);
 
 defineOptions({
     layout: {
@@ -108,7 +116,7 @@ const formattedDate = computed(() => {
             <div class="flex flex-col gap-6 lg:col-span-7">
                 <!-- Video Player (Top Left) -->
                 <div>
-                    <VideoPlayer :src="meeting.video_url" />
+                    <VideoPlayer ref="videoPlayerRef" :src="meeting.video_url" />
                 </div>
 
                 <!-- Executive Summary (Bottom Left, below video) -->
@@ -119,7 +127,11 @@ const formattedDate = computed(() => {
 
             <!-- Right Column: Transcript (Right) -->
             <div class="h-[600px] lg:col-span-5 lg:h-[calc(100vh-13rem)] lg:min-h-[640px]">
-                <TranscriptList :cues="transcript" />
+                <TranscriptList
+                    :cues="transcript"
+                    :active-cue-index="activeCueIndex"
+                    @select-cue="seekToCue"
+                />
             </div>
         </div>
     </div>

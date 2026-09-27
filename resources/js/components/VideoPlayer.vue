@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { VideoOff } from '@lucide/vue';
+import { ref } from 'vue';
 
 defineProps<{
     src: string | null;
 }>();
+
+const videoRef = ref<HTMLVideoElement | null>(null);
+
+defineExpose({
+    videoElement: videoRef,
+});
 </script>
 
 <template>
@@ -12,6 +19,7 @@ defineProps<{
     >
         <video
             v-if="src"
+            ref="videoRef"
             :src="src"
             controls
             playsinline
