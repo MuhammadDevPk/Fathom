@@ -12,6 +12,7 @@ const props = defineProps<{
     meeting: MeetingDetail;
     transcript: TranscriptCue[];
     summary: string | null;
+    active_template?: string;
 }>();
 
 const videoPlayerRef = ref<InstanceType<typeof VideoPlayer> | null>(null);
@@ -121,7 +122,11 @@ const formattedDate = computed(() => {
 
                 <!-- Executive Summary (Bottom Left, below video) -->
                 <div class="min-h-[340px]">
-                    <SummaryPanel :summary="summary" />
+                    <SummaryPanel
+                        :summary="summary"
+                        :active-template="active_template"
+                        :meeting-id="meeting.id"
+                    />
                 </div>
             </div>
 

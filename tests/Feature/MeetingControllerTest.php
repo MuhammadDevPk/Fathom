@@ -45,7 +45,10 @@ it('renders meeting detail view with video, transcript, and summary', function (
                 ->etc()
             )
             ->has('transcript')
-            ->where('summary', $meeting->summary)
+            ->loadDeferredProps(fn ($page) => $page
+                ->has('summary')
+                ->where('summary', $meeting->getSummaryForTemplate('general'))
+            )
         );
 });
 
