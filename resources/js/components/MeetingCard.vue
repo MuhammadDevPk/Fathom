@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { ArrowRight, Calendar, Clock, Users, Video } from '@lucide/vue';
 import { computed } from 'vue';
+import { buildSpeakerColorMap, getSpeakerColor } from '@/lib/speakerColors';
 import type { MeetingListItem } from '@/types';
 
 const props = defineProps<{
@@ -30,11 +31,11 @@ const formattedDate = computed(() => {
     });
 });
 
-const speakerPillColors = [
-    'bg-sky-50 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300',
-    'bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300',
-    'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
-];
+const speakerColorMap = computed(() => buildSpeakerColorMap(props.meeting.speakers));
+
+function getSpeakerPillClass(speaker: string): string {
+    return getSpeakerColor(speaker, speakerColorMap.value).pill;
+}
 </script>
 
 <template>
@@ -97,7 +98,7 @@ const speakerPillColors = [
                     :key="index"
                     :class="[
                         'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium',
-                        speakerPillColors[index % speakerPillColors.length],
+                        getSpeakerPillClass(speaker),
                     ]"
                 >
                     {{ speaker }}

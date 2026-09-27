@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import {
     ArrowLeft,
+    ArrowRight,
     Bookmark,
     Calendar,
     Clock,
@@ -33,12 +34,16 @@ const props = withDefaults(
         highlights?: HighlightItem[];
         action_items?: ActionItem[];
         qa_history?: QaItem[];
+        action_item_state?: Record<string, boolean>;
+        isDemo?: boolean;
     }>(),
     {
         active_template: 'general',
         highlights: () => [],
         action_items: () => [],
         qa_history: () => [],
+        action_item_state: () => ({}),
+        isDemo: false,
     },
 );
 
@@ -103,10 +108,37 @@ const formattedDate = computed(() => {
 <template>
     <Head :title="`${meeting.title} - Fathom`" />
 
-    <div class="relative flex flex-1 flex-col h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-hidden p-4 md:p-5 lg:p-6 bg-gradient-to-b from-sky-50/30 via-transparent to-transparent">
+    <div :class="['relative flex flex-1 flex-col overflow-hidden p-4 md:p-5 lg:p-6 bg-gradient-to-b from-sky-50/30 via-transparent to-transparent', isDemo ? 'h-screen max-h-screen' : 'h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)]']">
+        <!-- Demo Banner -->
+        <div
+            v-if="isDemo"
+            class="mb-3 flex shrink-0 items-center justify-between gap-3 rounded-2xl border border-sky-200/90 bg-gradient-to-r from-sky-50 via-sky-50/70 to-amber-50/70 px-4 py-2 shadow-2xs dark:border-sky-800/80 dark:bg-zinc-900"
+        >
+            <div class="flex items-center gap-2 min-w-0">
+                <span class="flex size-6 shrink-0 items-center justify-center rounded-lg bg-sky-500 text-white shadow-xs">
+                    <Sparkles class="size-3.5" />
+                </span>
+                <span class="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                    Demo
+                </span>
+                <span class="hidden text-xs text-zinc-600 sm:inline truncate dark:text-zinc-400">
+                    — Demo — sign up to save your own meetings, bookmark highlights, and query with AI.
+                </span>
+            </div>
+
+            <a
+                href="/register"
+                target="_top"
+                class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-r from-sky-500 via-sky-600 to-amber-500 px-3.5 py-1 text-xs font-semibold text-white shadow-xs transition-all hover:opacity-95"
+            >
+                <span>Sign up</span>
+                <ArrowRight class="size-3" />
+            </a>
+        </div>
+
         <!-- Top Nav & Meeting Title Header -->
         <div class="flex shrink-0 flex-col gap-2 border-b border-zinc-200/80 pb-3 dark:border-zinc-800">
-            <div>
+            <div v-if="!isDemo">
                 <Link
                     href="/meetings"
                     class="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-400 transition-colors duration-200 hover:text-sky-600 dark:text-zinc-500 dark:hover:text-sky-400"
@@ -204,6 +236,7 @@ const formattedDate = computed(() => {
                                 :summary="summary"
                                 :active-template="active_template"
                                 :meeting-id="meeting.id"
+                                :is-demo="isDemo"
                                 class="h-full"
                             />
                         </TabsContent>
@@ -211,7 +244,12 @@ const formattedDate = computed(() => {
                         <!-- Tab 2: Action Items -->
                         <TabsContent value="action-items" class="flex-1 min-h-0 overflow-hidden focus:outline-none transition-all duration-200">
                             <div class="h-full min-h-0 overflow-y-auto rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
-                                <ActionItemsList :action-items="action_items" />
+                                <ActionItemsList
+                                    :action-items="action_items"
+                                    :action-item-state="action_item_state"
+                                    :meeting-id="meeting.id"
+                                    :is-demo="isDemo"
+                                />
                             </div>
                         </TabsContent>
 
@@ -237,6 +275,7 @@ const formattedDate = computed(() => {
                     :meeting-duration="meeting.duration_seconds"
                     :highlights="highlights"
                     :qa-history="qa_history"
+                    :is-demo="isDemo"
                     @select-cue="seekToCue"
                     @seek="seekToTimestamp"
                 />

@@ -68,3 +68,11 @@ Stores keyed timestamp bookmarks and thematic takeaways for fast seeking in the 
 - **Mass Assignment:** All models strictly declare explicit `$fillable` attributes.
 - **Form Requests:** Every state-altering action (creating/updating meetings, adding highlights, submitting AI questions) uses dedicated Laravel `FormRequest` classes with rigorous validation rules.
 - **CSRF & Session Security:** Handled automatically by Laravel and Inertia middleware (`VerifyCsrfToken`).
+
+---
+
+## 6. Session State Persistence
+To avoid unnecessary database tables for transient or user-specific interaction state, the following session keys are utilized:
+- `meeting_{id}_qa`: Array of serialized Q&A items (`id`, `question`, `answer`, `created_at`) persisted per-meeting for Ask AI chat history.
+- `meeting_{id}_action_items`: Associative array storing checked action item indices (`['item_index_0' => true, 'item_index_2' => true]`). Toggled via `POST /meetings/{meeting}/action-items/toggle` (`meetings.action-items.toggle`). Guests in demo mode (`isDemo: true`) use local component state only and bypass session persistence.
+

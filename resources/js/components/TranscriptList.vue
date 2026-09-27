@@ -8,7 +8,7 @@ import {
     ScrollAreaThumb,
     ScrollAreaViewport,
 } from 'reka-ui';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 import AskAiPanel from '@/components/AskAiPanel.vue';
 import HighlightsList from '@/components/HighlightsList.vue';
@@ -21,6 +21,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { buildSpeakerColorMap, getSpeakerColor } from '@/lib/speakerColors';
 import type { HighlightItem, QaItem, TranscriptCue } from '@/types';
 
 const props = withDefaults(
@@ -31,6 +32,7 @@ const props = withDefaults(
         meetingDuration?: number;
         highlights?: HighlightItem[];
         qaHistory?: QaItem[];
+        isDemo?: boolean;
     }>(),
     {
         activeCueIndex: -1,
@@ -38,6 +40,7 @@ const props = withDefaults(
         meetingDuration: 0,
         highlights: () => [],
         qaHistory: () => [],
+        isDemo: false,
     },
 );
 
@@ -119,25 +122,10 @@ function formatTime(seconds: number): string {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-const speakerColors: Record<string, string> = {
-    'Alex Chen': 'bg-sky-100/80 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300',
-    'Maya Patel': 'bg-purple-100/80 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300',
-    'Marcus Brody': 'bg-emerald-100/80 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
-    'Elena Rostova': 'bg-amber-100/80 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300',
-    'Sarah Jenkins': 'bg-pink-100/80 text-pink-800 dark:bg-pink-950/60 dark:text-pink-300',
-    'David Kim': 'bg-indigo-100/80 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300',
-    'Rachel Adams': 'bg-rose-100/80 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300',
-    'Jordan Miller': 'bg-blue-100/80 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300',
-    'Samantha Wu': 'bg-teal-100/80 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300',
-    'Devante Washington': 'bg-violet-100/80 text-violet-800 dark:bg-violet-950/60 dark:text-violet-300',
-    'Priya Sharma': 'bg-orange-100/80 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300',
-    'Liam O\'Connor': 'bg-cyan-100/80 text-cyan-800 dark:bg-cyan-950/60 dark:text-cyan-300',
-    'Carlos Gomez': 'bg-lime-100/80 text-lime-800 dark:bg-lime-950/60 dark:text-lime-300',
-    'Thomas Wright': 'bg-fuchsia-100/80 text-fuchsia-800 dark:bg-fuchsia-950/60 dark:text-fuchsia-300',
-};
+const speakerColorMap = computed(() => buildSpeakerColorMap(props.cues));
 
 function getSpeakerBadgeClass(speaker: string): string {
-    return speakerColors[speaker] || 'bg-zinc-100/90 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200';
+    return getSpeakerColor(speaker, speakerColorMap.value).pill;
 }
 </script>
 
@@ -253,7 +241,7 @@ function getSpeakerBadgeClass(speaker: string): string {
 
                                     <!-- Bookmark Action Button -->
                                     <button
-                                        v-if="meetingId"
+                                        v-if="meetingId && !isDemo"
                                         type="button"
                                         class="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1 rounded-md text-zinc-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 shrink-0"
                                         title="Bookmark this moment"
@@ -303,6 +291,7 @@ function getSpeakerBadgeClass(speaker: string): string {
                 v-if="meetingId"
                 :meeting-id="meetingId"
                 :qa-history="qaHistory"
+                :is-demo="isDemo"
                 @seek="emit('seek', $event)"
             />
             <div

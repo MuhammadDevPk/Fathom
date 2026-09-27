@@ -57,9 +57,29 @@ class MeetingController extends Controller
     }
 
     /**
+     * Display the public demo meeting view.
+     */
+    public function demo(Request $request): Response
+    {
+        $meeting = Meeting::query()
+            ->orderBy('duration_seconds', 'asc')
+            ->firstOrFail();
+
+        return $this->renderMeetingDetail($request, $meeting, isDemo: true);
+    }
+
+    /**
      * Display the specified meeting detail view.
      */
     public function show(Request $request, Meeting $meeting): Response
+    {
+        return $this->renderMeetingDetail($request, $meeting, isDemo: false);
+    }
+
+    /**
+     * Build props and render the meeting detail view.
+     */
+    private function renderMeetingDetail(Request $request, Meeting $meeting, bool $isDemo = false): Response
     {
         $template = (string) $request->input('template', $meeting->summary_template ?: 'general');
         if (! in_array($template, ['general', 'sales', 'engineering'], true)) {
@@ -70,6 +90,23 @@ class MeetingController extends Controller
         /** @var array<int, array{id: string, question: string, answer: string, created_at: string}> $qaHistory */
         $qaHistory = (array) $request->session()->get($sessionKey, []);
 
+        $actionItemSessionKey = "meeting_{$meeting->id}_action_items";
+        /** @var array<string, bool> $actionItemState */
+        $actionItemState = [];
+
+        if (! $isDemo) {
+            if (! $request->session()->has($actionItemSessionKey)) {
+                $initialState = [];
+                foreach ($meeting->action_items ?? [] as $idx => $item) {
+                    if (! empty($item['completed'])) {
+                        $initialState["item_index_{$idx}"] = true;
+                    }
+                }
+                $request->session()->put($actionItemSessionKey, $initialState);
+            }
+            $actionItemState = (array) $request->session()->get($actionItemSessionKey, []);
+        }
+
         return Inertia::render('Meetings/Show', [
             'meeting' => $meeting->only(['id', 'title', 'video_url', 'duration_seconds', 'created_at']),
             'transcript' => $meeting->transcript ?? [],
@@ -78,7 +115,39 @@ class MeetingController extends Controller
             'highlights' => $meeting->highlights()->orderBy('timestamp_seconds')->get(['id', 'meeting_id', 'timestamp_seconds', 'label', 'note']),
             'action_items' => $meeting->action_items ?? [],
             'qa_history' => $qaHistory,
+            'action_item_state' => (object) $actionItemState,
+            'actionItemState' => (object) $actionItemState,
+            'isDemo' => $isDemo,
         ]);
+    }
+
+    /**
+     * Toggle the completion state of an action item in the session.
+     */
+    public function toggleActionItem(Request $request, Meeting $meeting): RedirectResponse
+    {
+        $validated = $request->validate([
+            'index' => ['required', 'integer', 'min:0'],
+            'checked' => ['required', 'boolean'],
+        ]);
+
+        $index = (int) $validated['index'];
+        $checked = (bool) $validated['checked'];
+
+        $sessionKey = "meeting_{$meeting->id}_action_items";
+        /** @var array<string, bool> $state */
+        $state = (array) $request->session()->get($sessionKey, []);
+
+        $itemKey = "item_index_{$index}";
+        if ($checked) {
+            $state[$itemKey] = true;
+        } else {
+            unset($state[$itemKey]);
+        }
+
+        $request->session()->put($sessionKey, $state);
+
+        return back();
     }
 
     /**

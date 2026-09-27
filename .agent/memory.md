@@ -36,6 +36,8 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 - [x] Phase 7.5c: Targeted UI Polish (Sidebar header & nav rows, Index search bar, Meeting cards with SenseLab soft gradient border and filled pills, Meeting detail header, tabs, and transcript cues)
 - [x] Phase 7.6: QA Audit + Edge Case Hardening (Comprehensive audit report at `.agent/qa_report.md`, custom `Error.vue` page, route protection on `/meetings`, search debounced spinner, race condition and double-submit guards, break-words overflow protection, 100% green tests)
 - [x] Phase 7.7: Ask AI Intelligence + Markdown Rendering (Scoped LLM prompt to question depth, structured headline + 3–5 bullets per summary section, lightweight MarkdownRenderer with markdown-it, escaped raw HTML, and preserved interactive timestamp pills)
+- [x] Phase 7.8: Live Demo Embed on Landing Page (Public `/demo/meeting` route with shortest meeting, browser mockup iframe with skeleton loader, fullscreen toggle via useFullscreen, and demo read-only guards)
+- [x] Phase 7.9: Additional Fixes (Action items checkbox session persistence `meeting_{id}_action_items`, deterministic 10-entry speakerColors palette, aligned MeetingFactory with updated seeder)
 - [x] Phase 8: Production README creation and verification (13-section technical assessment documentation with exact dependency versions, data model, request flow, deployment guide, and test statistics)
 
 ---
@@ -68,5 +70,35 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 
 ---
 
+## Phase 7.8: Live Demo Embed on Landing Page
+- **Public Demo Route ([`routes/web.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/routes/web.php) & [`app/Http/Controllers/MeetingController.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/app/Http/Controllers/MeetingController.php)):**
+  - Added public GET route `demo.meeting` (`/demo/meeting`) rendering the shortest seeded meeting via `Meeting::query()->orderBy('duration_seconds', 'asc')->firstOrFail()`.
+  - Reused `renderMeetingDetail()` helper with `isDemo: true`.
+  - Added read-only safeguards: guest visitors can play media, click transcript cues, and switch summary templates, while mutations (bookmarking highlights, regenerating summaries, querying Ask AI) are cleanly disabled.
+  - Added top Demo Mode banner in [`Show.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Meetings/Show.vue) with direct link to `/register` (`target="_top"`).
+  - Bypassed sidebar and header in [`AppSidebarLayout.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/layouts/app/AppSidebarLayout.vue) when `isDemo` is active.
+- **Interactive Landing Page Embed ([`resources/js/pages/Welcome.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Welcome.vue)):**
+  - Embedded responsive `<iframe>` inside a browser mockup frame with URL bar (`fathom.test/demo/meeting`), macOS window dots, and "Live Demo" badge.
+  - Added subtle loading skeleton with spinner until `@load` triggers.
+  - Implemented one-click fullscreen expansion and collapse with `@vueuse/core` `useFullscreen` and `@lucide/vue` `Maximize2` / `Minimize2` icons.
+
+---
+
+## Phase 7.9: Additional Fixes
+- **Fix 1: Persist Action Item Checkbox State ([`MeetingController.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/app/Http/Controllers/MeetingController.php), [`ActionItemsList.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/ActionItemsList.vue), [`.agent/architecture.md`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/.agent/architecture.md)):**
+  - Added `POST /meetings/{meeting}/action-items/toggle` route storing checked indices in Laravel session key `meeting_{id}_action_items` as `['item_index_X' => true]`.
+  - Initialized session from seeded data on first view and hydrated `actionItemState` prop.
+  - Connected `ActionItemsList.vue` with optimistic local reactivity and non-reloading `router.post()` background synchronization.
+  - Preserved local-only temporary behavior for demo mode guests.
+- **Fix 2: Deterministic Speaker Colors ([`speakerColors.ts`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/lib/speakerColors.ts)):**
+  - Removed all hardcoded name-to-color dictionaries.
+  - Created reusable `resources/js/lib/speakerColors.ts` with 10 distinct, aesthetic pastel entries matching `.agent/ui_reference.md`.
+  - Implemented `buildSpeakerColorMap` (order of first appearance) and `getSpeakerColor` (hash fallback) across `TranscriptList.vue`, `MeetingCard.vue`, and `ActionItemsList.vue`.
+- **Fix 3: Aligned MeetingFactory ([`MeetingFactory.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/database/factories/MeetingFactory.php) & [`MeetingModelTest.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/tests/Feature/MeetingModelTest.php)):**
+  - Updated `MeetingFactory` to produce structured multi-template summaries (`general`, `sales`, `engineering`), realistic speakers (`Host`, `Dr. Ananth`, `Jadav Payeng`), and action items with `id`, `task`, `assignee`, and `completed`.
+  - Added Pest test `it('factory produces a meeting with a well-formed transcript')`.
+
+---
+
 ## 4. Current Next Step
-Phase 7.7 complete and verified (Pest, Pint, PHPStan, Vue TSC, VP Build all passing). Awaiting user approval.
+Phase 7.8 and Phase 7.9 complete and verified (Pest 54/54 passing, Pint clean, PHPStan 0 errors, Vue TSC clean, VP Build clean). Ready for user review.

@@ -5,6 +5,7 @@ use App\Http\Controllers\MeetingController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
+Route::get('demo/meeting', [MeetingController::class, 'demo'])->name('demo.meeting');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [MeetingController::class, 'index'])->name('dashboard');
@@ -13,6 +14,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('meetings/{meeting}/summary', [MeetingController::class, 'generateSummary'])->name('meetings.summary.generate');
     Route::post('meetings/{meeting}/highlights', [HighlightController::class, 'store'])->name('meetings.highlights.store');
     Route::post('meetings/{meeting}/ask', [MeetingController::class, 'ask'])->name('meetings.ask');
+    Route::post('meetings/{meeting}/action-items/toggle', [MeetingController::class, 'toggleActionItem'])->name('meetings.action-items.toggle');
 });
 
 require __DIR__.'/settings.php';

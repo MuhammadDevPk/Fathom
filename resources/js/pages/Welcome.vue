@@ -10,7 +10,9 @@ import {
     HelpCircle,
     Layers,
     ListTodo,
+    Maximize2,
     MessageSquare,
+    Minimize2,
     Play,
     Search,
     Shield,
@@ -19,11 +21,20 @@ import {
     Video,
     Zap,
 } from '@lucide/vue';
-import { computed } from 'vue';
+import { useFullscreen } from '@vueuse/core';
+import { computed, ref } from 'vue';
 import { dashboard, login, register } from '@/routes';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
+
+const iframeRef = ref<HTMLIFrameElement | null>(null);
+const { isFullscreen, toggle: toggleFullscreen } = useFullscreen(iframeRef);
+const isIframeLoading = ref(true);
+
+function onIframeLoad() {
+    isIframeLoading.value = false;
+}
 
 const features = [
     {
@@ -257,94 +268,58 @@ const techStack = [
                     <!-- Main App Window Frame -->
                     <div class="overflow-hidden rounded-3xl border border-zinc-200/90 bg-white shadow-2xl shadow-slate-300/40 dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-zinc-950/60">
                         <!-- Mockup Top Bar -->
-                        <div class="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-5 py-3.5 dark:border-zinc-800 dark:bg-zinc-900/80">
+                        <div class="flex items-center justify-between border-b border-zinc-100 bg-zinc-50/70 px-5 py-3 dark:border-zinc-800 dark:bg-zinc-900/80">
+                            <!-- Left: 3 macOS dots + URL -->
                             <div class="flex items-center gap-2">
                                 <span class="size-3 rounded-full bg-rose-400" />
                                 <span class="size-3 rounded-full bg-amber-400" />
                                 <span class="size-3 rounded-full bg-emerald-400" />
-                                <span class="ml-3 font-mono text-xs font-semibold text-zinc-500">fathom.test/meetings/1</span>
+                                <span class="ml-3 font-mono text-xs font-semibold text-zinc-500">fathom.test/demo/meeting</span>
                             </div>
 
-                            <div class="hidden items-center gap-2 sm:flex">
+                            <!-- Right: Live Demo Badge + Fullscreen Button -->
+                            <div class="flex items-center gap-3">
                                 <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300">
                                     <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                    Live Sync
+                                    Live Demo
                                 </span>
+
+                                <button
+                                    type="button"
+                                    class="inline-flex size-7 items-center justify-center rounded-lg border border-zinc-200/80 bg-white text-zinc-600 shadow-2xs transition-colors hover:bg-zinc-50 hover:text-sky-600 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 dark:hover:text-sky-400 cursor-pointer"
+                                    :title="isFullscreen ? 'Exit Fullscreen' : 'View Fullscreen'"
+                                    @click="toggleFullscreen"
+                                >
+                                    <Minimize2 v-if="isFullscreen" class="size-3.5" />
+                                    <Maximize2 v-else class="size-3.5" />
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Mockup Interior (3-Panel Preview) -->
-                        <div class="grid grid-cols-1 gap-6 p-6 lg:grid-cols-12">
-                            <!-- Left: Video Showcase + Summary Preview -->
-                            <div class="flex flex-col gap-6 lg:col-span-7">
-                                <!-- Dark Video Container -->
-                                <div class="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-3xl bg-zinc-950 p-6 shadow-md">
-                                    <div class="pointer-events-none absolute inset-0 bg-radial from-sky-500/10 via-transparent to-transparent opacity-50" />
-                                    <div class="flex flex-col items-center gap-3 text-center">
-                                        <div class="flex size-14 items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-xl transition-transform hover:scale-105 cursor-pointer">
-                                            <Play class="size-6 fill-current pl-1" />
-                                        </div>
-                                        <p class="font-mono text-xs font-semibold text-zinc-300">
-                                            Product & Engineering Sync (02:05)
-                                        </p>
-                                    </div>
+                        <!-- Mockup Interior (Interactive Live Demo Iframe) -->
+                        <div class="relative w-full aspect-[16/10] min-h-[520px] md:min-h-[640px] bg-zinc-50 dark:bg-zinc-950 overflow-hidden">
+                            <!-- Subtle Loading Skeleton -->
+                            <div
+                                v-if="isIframeLoading"
+                                class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-zinc-50/90 p-8 text-center backdrop-blur-xs dark:bg-zinc-900/90 z-10"
+                            >
+                                <div class="size-9 rounded-xl bg-gradient-to-tr from-sky-500 to-amber-500 flex items-center justify-center text-white animate-spin">
+                                    <Sparkles class="size-4" />
                                 </div>
-
-                                <!-- Summary Card Preview -->
-                                <div class="rounded-3xl border border-zinc-200/80 bg-zinc-50/60 p-5 dark:border-zinc-800 dark:bg-zinc-800/40">
-                                    <div class="mb-3 flex items-center justify-between">
-                                        <span class="text-xs font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
-                                            <Sparkles class="size-3.5 text-sky-500" />
-                                            Executive Intelligence
-                                        </span>
-                                        <div class="flex gap-1">
-                                            <span class="rounded-lg bg-white px-2 py-0.5 text-[10px] font-semibold text-zinc-800 shadow-2xs border border-zinc-200/60 dark:bg-zinc-700 dark:text-zinc-200">
-                                                General
-                                            </span>
-                                            <span class="rounded-lg px-2 py-0.5 text-[10px] font-medium text-zinc-400">
-                                                Sales
-                                            </span>
-                                            <span class="rounded-lg px-2 py-0.5 text-[10px] font-medium text-zinc-400">
-                                                Engineering
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-zinc-600 leading-relaxed dark:text-zinc-400">
-                                        • Standardized on headless Reka UI primitives for accessible dialogues and modals.<br />
-                                        • Leveraged Inertia v3 deferred props for sub-50ms initial paints on large transcripts.
-                                    </p>
-                                </div>
+                                <p class="text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                                    Loading interactive meeting intelligence demo...
+                                </p>
                             </div>
 
-                            <!-- Right: Synced Transcript Column -->
-                            <div class="lg:col-span-5">
-                                <div class="h-full rounded-3xl border border-zinc-200/80 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
-                                    <div class="mb-3 flex items-center justify-between border-b border-zinc-100 pb-2.5 dark:border-zinc-800">
-                                        <span class="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Transcript Cues</span>
-                                        <span class="text-[10px] text-zinc-400">Click cue to jump</span>
-                                    </div>
-                                    <div class="space-y-2.5">
-                                        <div class="rounded-2xl border-l-4 border-l-sky-500 bg-sky-50/80 p-3 shadow-2xs dark:bg-sky-950/40">
-                                            <div class="flex items-center justify-between text-xs mb-1">
-                                                <span class="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-sky-700">Alex Chen</span>
-                                                <span class="font-mono text-[10px] text-sky-600 font-semibold">00:45</span>
-                                            </div>
-                                            <p class="text-xs text-zinc-800 font-medium leading-relaxed dark:text-zinc-200">
-                                                "We decided to lock in the final architecture for our meeting intelligence workspace."
-                                            </p>
-                                        </div>
-                                        <div class="rounded-2xl p-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
-                                            <div class="flex items-center justify-between text-xs mb-1">
-                                                <span class="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-semibold text-purple-700">Maya Patel</span>
-                                                <span class="font-mono text-[10px] text-zinc-400">01:12</span>
-                                            </div>
-                                            <p class="text-xs text-zinc-600 leading-relaxed dark:text-zinc-400">
-                                                "From the frontend side, keyboard navigation and accessibility are buttery smooth now."
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- Live Demo Iframe -->
+                            <iframe
+                                ref="iframeRef"
+                                src="/demo/meeting"
+                                title="Fathom Live Interactive Demo Meeting"
+                                class="size-full border-none"
+                                allow="fullscreen"
+                                @load="onIframeLoad"
+                            />
                         </div>
                     </div>
                 </div>

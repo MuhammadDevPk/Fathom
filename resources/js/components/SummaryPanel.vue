@@ -27,10 +27,12 @@ const props = withDefaults(
         summary: string | null;
         activeTemplate?: string;
         meetingId?: number;
+        isDemo?: boolean;
     }>(),
     {
         activeTemplate: 'general',
         meetingId: undefined,
+        isDemo: false,
     },
 );
 
@@ -248,7 +250,7 @@ function getSectionIconBg(title: string): string {
 
                     <!-- Regenerate / Re-run Action -->
                     <button
-                        v-if="meetingId"
+                        v-if="meetingId && !isDemo"
                         type="button"
                         :disabled="isReloading"
                         class="inline-flex size-7 items-center justify-center rounded-lg border border-zinc-200 text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-800 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 cursor-pointer"

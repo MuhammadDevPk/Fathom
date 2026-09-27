@@ -17,9 +17,11 @@ const props = withDefaults(
     defineProps<{
         meetingId: number;
         qaHistory?: QaItem[];
+        isDemo?: boolean;
     }>(),
     {
         qaHistory: () => [],
+        isDemo: false,
     },
 );
 
@@ -49,6 +51,11 @@ watch(
 );
 
 function submitQuestion(customQuestion?: string) {
+    if (props.isDemo) {
+        toast.info('Ask AI queries are disabled in demo mode. Sign up to query meetings with AI!');
+        return;
+    }
+
     if (customQuestion) {
         form.question = customQuestion;
     }
@@ -214,17 +221,17 @@ const quickPrompts = [
                     <input
                         v-model="form.question"
                         type="text"
-                        placeholder="Ask a question about this meeting (e.g. What was agreed upon?)..."
-                        class="w-full rounded-xl border border-zinc-200 bg-zinc-50/60 px-3.5 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-sky-500 focus:bg-white focus:outline-none dark:border-zinc-700 dark:bg-zinc-800/80 dark:text-zinc-100 dark:focus:bg-zinc-800"
-                        :disabled="form.processing"
+                        :placeholder="isDemo ? 'Ask AI queries disabled in demo mode — sign up to ask questions' : 'Ask a question about this meeting (e.g. What was agreed upon?)...'"
+                        class="w-full rounded-xl border border-zinc-200 bg-zinc-50/60 px-3.5 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-sky-500 focus:bg-white focus:outline-none dark:border-zinc-700 dark:bg-zinc-800/80 dark:text-zinc-100 dark:focus:bg-zinc-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                        :disabled="form.processing || isDemo"
                         @keydown="handleKeydown"
                     />
                 </div>
 
                 <button
                     type="submit"
-                    :disabled="!form.question.trim() || form.processing"
-                    class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:opacity-95 disabled:opacity-50 cursor-pointer shrink-0"
+                    :disabled="!form.question.trim() || form.processing || isDemo"
+                    class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-sky-500 to-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:opacity-95 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed shrink-0"
                 >
                     <Send class="size-3.5" />
                     <span>Ask</span>

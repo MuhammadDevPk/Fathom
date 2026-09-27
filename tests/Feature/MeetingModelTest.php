@@ -59,3 +59,16 @@ it('seeds realistic meetings with non-empty transcripts', function () {
             ->and($meeting->highlights)->not->toBeEmpty();
     }
 });
+
+it('factory produces a meeting with a well-formed transcript', function () {
+    $meeting = Meeting::factory()->create();
+
+    expect($meeting->transcript)->toBeArray()->not->toBeEmpty();
+    expect($meeting->transcript[0])->toHaveKeys(['start', 'end', 'speaker', 'text']);
+    expect($meeting->action_items)->toBeArray()->not->toBeEmpty();
+    expect($meeting->action_items[0])->toHaveKeys(['id', 'task', 'assignee', 'completed']);
+
+    $decodedSummary = json_decode((string) $meeting->summary, true);
+    expect($decodedSummary)->toBeArray()
+        ->toHaveKeys(['general', 'sales', 'engineering']);
+});

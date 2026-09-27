@@ -1,32 +1,77 @@
 <script setup lang="ts">
+import { router } from '@inertiajs/vue3';
 import { CheckCircle2, Circle, ListTodo, User } from '@lucide/vue';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
+import { buildSpeakerColorMap, getSpeakerColor } from '@/lib/speakerColors';
 import type { ActionItem } from '@/types';
 
 const props = withDefaults(
     defineProps<{
         actionItems?: ActionItem[];
+        actionItemState?: Record<string, boolean>;
+        meetingId?: number;
+        isDemo?: boolean;
     }>(),
     {
         actionItems: () => [],
+        actionItemState: () => ({}),
+        meetingId: undefined,
+        isDemo: false,
     },
 );
 
-// Session-only local UI state for checkbox toggle per .agent/architecture.md
+// Local state for optimistic UI updates
 const localState = reactive<Record<number, boolean>>({});
 
+// Sync local state when actionItemState prop updates from session
+watch(
+    () => props.actionItemState,
+    (newState) => {
+        if (newState) {
+            Object.keys(newState).forEach((key) => {
+                const match = key.match(/^item_index_(\d+)$/);
+                if (match) {
+                    const idx = Number(match[1]);
+                    localState[idx] = Boolean(newState[key]);
+                }
+            });
+        }
+    },
+    { immediate: true, deep: true },
+);
+
 function isCompleted(item: ActionItem, index: number): boolean {
-    const key = item.id ?? index;
-    if (key in localState) {
-        return localState[key];
+    if (index in localState) {
+        return localState[index];
+    }
+    const sessionKey = `item_index_${index}`;
+    if (props.actionItemState && sessionKey in props.actionItemState) {
+        return Boolean(props.actionItemState[sessionKey]);
     }
     return Boolean(item.completed);
 }
 
 function toggleItem(item: ActionItem, index: number) {
-    const key = item.id ?? index;
-    localState[key] = !isCompleted(item, index);
+    const nextChecked = !isCompleted(item, index);
+    localState[index] = nextChecked;
+
+    // In demo mode or without meetingId, maintain local-only state per specs
+    if (props.isDemo || !props.meetingId) {
+        return;
+    }
+
+    router.post(
+        `/meetings/${props.meetingId}/action-items/toggle`,
+        {
+            index,
+            checked: nextChecked,
+        },
+        {
+            preserveScroll: true,
+            preserveState: true,
+        },
+    );
 }
 
 const completedCount = computed(() => {
@@ -40,25 +85,15 @@ const progressPercent = computed(() => {
     return Math.round((completedCount.value / props.actionItems.length) * 100);
 });
 
-const speakerColors: Record<string, string> = {
-    'Alex Chen': 'bg-sky-50 text-sky-700 border-sky-200/70 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/60',
-    'Maya Patel': 'bg-purple-50 text-purple-700 border-purple-200/70 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/60',
-    'Marcus Brody': 'bg-emerald-50 text-emerald-700 border-emerald-200/70 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60',
-    'Elena Rostova': 'bg-amber-50 text-amber-700 border-amber-200/70 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60',
-    'Sarah Jenkins': 'bg-pink-50 text-pink-700 border-pink-200/70 dark:bg-pink-950/40 dark:text-pink-300 dark:border-pink-800/60',
-    'David Kim': 'bg-indigo-50 text-indigo-700 border-indigo-200/70 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-800/60',
-    'Rachel Adams': 'bg-rose-50 text-rose-700 border-rose-200/70 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/60',
-    'Jordan Miller': 'bg-blue-50 text-blue-700 border-blue-200/70 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60',
-    'Samantha Wu': 'bg-teal-50 text-teal-700 border-teal-200/70 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-800/60',
-    'Devante Washington': 'bg-violet-50 text-violet-700 border-violet-200/70 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-800/60',
-    'Priya Sharma': 'bg-orange-50 text-orange-700 border-orange-200/70 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60',
-    'Liam O\'Connor': 'bg-cyan-50 text-cyan-700 border-cyan-200/70 dark:bg-cyan-950/40 dark:text-cyan-300 dark:border-cyan-800/60',
-    'Carlos Gomez': 'bg-lime-50 text-lime-700 border-lime-200/70 dark:bg-lime-950/40 dark:text-lime-300 dark:border-lime-800/60',
-    'Thomas Wright': 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200/70 dark:bg-fuchsia-950/40 dark:text-fuchsia-300 dark:border-fuchsia-800/60',
-};
+const speakerColorMap = computed(() => {
+    const assignees = props.actionItems
+        .map((item) => item.assignee)
+        .filter((s): s is string => typeof s === 'string' && s.trim() !== '');
+    return buildSpeakerColorMap(assignees);
+});
 
 function getSpeakerBadgeClass(speaker: string): string {
-    return speakerColors[speaker] || 'bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700';
+    return getSpeakerColor(speaker, speakerColorMap.value).badge;
 }
 </script>
 
