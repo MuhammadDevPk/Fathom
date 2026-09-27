@@ -4,22 +4,36 @@ use App\Http\Controllers\HighlightController;
 use App\Http\Controllers\MeetingController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use App\Models\Meeting;
 use App\Models\Highlight;
 
 Route::get('/setup-demo-data', function () {
-    // 1. Safely delete the old records without dropping the database tables
-    Highlight::query()->delete();
-    Meeting::query()->delete();
+    try {
+        // Temporarily disable foreign key checks in case related tables are blocking the delete
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-    // 2. Run only the seeder command
-    Artisan::call('db:seed', [
-        '--class' => 'MeetingSeeder',
-        '--force' => true
-    ]);
+        // Delete old records
+        Highlight::query()->delete();
+        Meeting::query()->delete();
 
-    return 'Old data deleted and new data seeded successfully! Output: ' . Artisan::output();
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // Run the seeder
+        Artisan::call('db:seed', [
+            '--class' => 'Database\\Seeders\\MeetingSeeder',
+            '--force' => true
+        ]);
+
+        return 'Old data deleted and new data seeded successfully! Output: ' . Artisan::output();
+
+    } catch (\Exception $e) {
+        // This will print the exact reason for the 500 error to your screen
+        return 'Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine();
+    }
 });
+
 Route::inertia('/', 'Welcome')->name('home');
 Route::get('demo/meeting', [MeetingController::class, 'demo'])->name('demo.meeting');
 Route::post('demo/login', [MeetingController::class, 'demoLogin'])->middleware('throttle:10,1')->name('demo.login');
