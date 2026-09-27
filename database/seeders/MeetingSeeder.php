@@ -153,7 +153,7 @@ class MeetingSeeder extends Seeder
         ]);
 
         // Meeting 2: Executive Design Review
- $meeting2 = Meeting::create([
+        $meeting2 = Meeting::create([
             'user_id' => $user->id,
             'title' => 'Career Advice, Reading & The Positive Sum Mindset',
             'video_url' => '/videos/demo2.mp4',
@@ -254,7 +254,7 @@ class MeetingSeeder extends Seeder
                     'start' => 474.0,
                     'end' => 478.0,
                     'text' => 'Yeah, that applies broadly. Exactly.',
-                ]
+                ],
             ],
             'summary' => json_encode([
                 'general' => "## Executive Summary\nA conversation discussing career advice, finding purpose, and the importance of having a net positive impact on society. The dialogue emphasizes that true utility comes from creating more than you consume and broadly exploring knowledge before committing to a specific path.\n\n### Key Discussion Points\n- **Utility Over Leadership:** The primary career goal should be usefulness rather than seeking leadership positions for their own sake.\n- **Knowledge Exploration:** Broad reading, such as skimming an encyclopedia, acts as a shortcut to discovering the intersection of one's innate talents and genuine interests.\n- **First Principles Thinking:** The mental tools derived from physics are presented as the most effective framework for solving general life and career problems.\n- **The Positive-Sum Mindset:** Rejecting zero-sum thinking (where success requires taking from others) in favor of 'growing the pie' through creation and collaboration.\n\n### Notable Quotes\n- *\"Try to find something where there's an overlap of your talents and what you're interested in.\"*\n- *\"It's much better to work on adding to the economic pie, creating more than you consume.\"*",
@@ -310,7 +310,7 @@ class MeetingSeeder extends Seeder
         ]);
 
         // Meeting 3: Enterprise Q3 Sales Pipeline Call
-$meeting3 = Meeting::create([
+        $meeting3 = Meeting::create([
             'user_id' => $user->id,
             'title' => 'Monthly Departmental Managers Sync: Relocation & Flexible Working',
             'video_url' => '/videos/demo3.mp4',

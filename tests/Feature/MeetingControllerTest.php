@@ -22,7 +22,7 @@ it('redirects unauthenticated guests accessing meeting detail to the login page'
     $response->assertRedirect(route('login'));
 });
 
-it('renders the meetings index page with 5 seeded meeting cards for authenticated users', function () {
+it('renders the meetings index page with seeded meeting cards for authenticated users', function () {
     $this->seed(MeetingSeeder::class);
     $user = User::first() ?? User::factory()->create();
 
@@ -31,8 +31,8 @@ it('renders the meetings index page with 5 seeded meeting cards for authenticate
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Meetings/Index')
-            ->has('meetings.data', 5)
-            ->where('meetings.total', 5)
+            ->has('meetings.data', 3)
+            ->where('meetings.total', 3)
             ->has('meetings.data.0', fn ($meeting) => $meeting
                 ->has('id')
                 ->has('title')
@@ -78,6 +78,6 @@ it('allows authenticated users to view dashboard which renders meetings', functi
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Meetings/Index')
-            ->has('meetings.data', 5)
+            ->has('meetings.data', 3)
         );
 });

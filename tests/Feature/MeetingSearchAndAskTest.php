@@ -92,3 +92,38 @@ it('validates ask question input', function () {
 
     $response->assertSessionHasErrors(['question']);
 });
+
+it('scopes answers to speaker list when asked who spoke', function () {
+    $user = User::factory()->create();
+    $meeting = Meeting::factory()->create([
+        'user_id' => $user->id,
+        'transcript' => [
+            ['speaker' => 'Dr. Ananth', 'start' => 23.0, 'end' => 33.0, 'text' => 'Tell me two critically endangered plants.'],
+            ['speaker' => 'Jadav Payeng', 'start' => 122.0, 'end' => 125.0, 'text' => 'On my birthday I will do this.'],
+        ],
+    ]);
+
+    $client = app(GroqClient::class);
+    $answer = $client->answerQuestion(['transcript' => $meeting->transcript], 'Who spoke in this meeting?');
+    $normalized = preg_replace('/\s+/u', ' ', $answer) ?? $answer;
+
+    expect($normalized)->toContain('Dr. Ananth')
+        ->and($normalized)->toContain('Jadav Payeng')
+        ->and($normalized)->not->toContain('Executive Summary')
+        ->and($normalized)->not->toContain('|');
+});
+
+it('returns not covered in this meeting when topic is absent', function () {
+    $user = User::factory()->create();
+    $meeting = Meeting::factory()->create([
+        'user_id' => $user->id,
+        'transcript' => [
+            ['speaker' => 'Alex Chen', 'start' => 10.0, 'end' => 20.0, 'text' => 'We discussed frontend architecture.'],
+        ],
+    ]);
+
+    $client = app(GroqClient::class);
+    $answer = $client->answerQuestion(['transcript' => $meeting->transcript], 'What is the recipe for chocolate cake?');
+
+    expect($answer)->toBe('Not covered in this meeting.');
+});

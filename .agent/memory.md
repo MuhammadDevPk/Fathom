@@ -35,8 +35,21 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 - [x] Phase 7.5: UI Polish + Public Landing Page & Authentication Screens (Public landing page at `/`, Dashboard & Detail rounded-3xl and ambient wash polish, Sidebar soft highlight pill active states, Auth layout and Login/Register/Password screens transformed with modern light-mode SaaS cards, ambient glow washes, and Fathom branding)
 - [x] Phase 7.5c: Targeted UI Polish (Sidebar header & nav rows, Index search bar, Meeting cards with SenseLab soft gradient border and filled pills, Meeting detail header, tabs, and transcript cues)
 - [x] Phase 7.6: QA Audit + Edge Case Hardening (Comprehensive audit report at `.agent/qa_report.md`, custom `Error.vue` page, route protection on `/meetings`, search debounced spinner, race condition and double-submit guards, break-words overflow protection, 100% green tests)
+- [x] Phase 7.7: Ask AI Intelligence + Markdown Rendering (Scoped LLM prompt to question depth, structured headline + 3–5 bullets per summary section, lightweight MarkdownRenderer with markdown-it, escaped raw HTML, and preserved interactive timestamp pills)
 - [x] Phase 8: Production README creation and verification (13-section technical assessment documentation with exact dependency versions, data model, request flow, deployment guide, and test statistics)
-- [x] Detail & Sidebar Refinements: Video height increased to natural 16:9 cinematic proportions (`h-[300px]` to `h-[425px]`), Summary panel updated with Reka UI `ScrollArea` internal scrolling matching transcript, and removed Repository / Documentation links from sidebar.
+
+---
+
+## Phase 7.7: Ask AI Intelligence + Markdown Rendering
+- **Scoped Question Answering ([`app/Services/GroqClient.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/app/Services/GroqClient.php)):**
+  - Rewrote system prompt for `answerQuestion()` with strict rules: answers only what was asked, no volunteering unrequested speaker lists or agendas, 2–4 sentences for simple questions, bullets only on request, zero markdown tables unless requested, inline `[MM:SS]` timestamp citations, and single-sentence `"Not covered in this meeting."` response when topics are absent.
+  - Updated `buildSystemPrompt()` for summaries to enforce structured headline + 3–5 bullets per section rather than free-form paragraphs.
+  - Added intelligent fallback behavior for speaker inquiries and out-of-scope topics.
+- **Markdown Rendering in Ask AI ([`resources/js/components/MarkdownRenderer.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/MarkdownRenderer.vue) & [`AskAiPanel.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/AskAiPanel.vue)):**
+  - Installed lightweight parser `markdown-it` (`^14.1.0`) and `@types/markdown-it` (`^14.1.2`).
+  - Created `MarkdownRenderer.vue` rendering markdown with `html: false` (escapes raw HTML for security) and `linkify: true`.
+  - Added styled typography classes and scoped styles for paragraphs, lists, bold text, inline code, and tables.
+  - Implemented non-destructive timestamp pill parsing (`[MM:SS]` / `MM:SS`) on text nodes after markdown rendering, preserving click-to-seek video playback.
 
 ---
 
@@ -56,4 +69,4 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 ---
 
 ## 4. Current Next Step
-All visual refinements, internal scrolling, and sidebar link cleanups verified and 100% green. Ready for user presentation.
+Phase 7.7 complete and verified (Pest, Pint, PHPStan, Vue TSC, VP Build all passing). Awaiting user approval.

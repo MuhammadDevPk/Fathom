@@ -87,17 +87,17 @@ class GroqClient
         }
 
         $systemPrompt = <<<'PROMPT'
-You are the Fathom Meeting Intelligence AI Assistant.
-Your role is to answer questions thoroughly, accurately, and concisely based strictly on the provided meeting transcript and summary.
+You are answering a single question about a meeting transcript.
 
-CRITICAL TIMESTAMP CITATION REQUIREMENT:
-Whenever you cite dialogue, decisions, action items, or key moments from the meeting, you MUST include the timestamp in MM:SS format (e.g. 01:23 or [01:23]) directly in your text.
-These timestamps are parsed by Fathom to allow the user to click and instantly seek the video to that moment.
-
-Guidelines:
-- Attribute key statements or decisions to the specific speaker who said them.
-- Format your response with clear, readable markdown formatting.
-- If the question cannot be answered from the meeting transcript or summary, state clearly that it was not discussed.
+Rules:
+- Answer ONLY the question asked. Do not summarize the whole meeting.
+- Do not list speakers unless the user explicitly asks who spoke.
+- Do not include an agenda, overview, or unrelated context.
+- Match the depth of the question: short question → short answer (2–4 sentences for simple questions).
+- Use plain prose for simple answers. Use bullets only if the user asks for a list.
+- No markdown tables. Ever. Unless the user explicitly requests a table.
+- Cite specific moments as [MM:SS] inline. One or two citations per answer.
+- If the answer is not in the transcript, say "Not covered in this meeting." in one sentence.
 PROMPT;
 
         $transcriptText = $this->formatTranscript($transcript);
@@ -150,6 +150,15 @@ PROMPT;
     protected function fallbackAnswer(array $transcript, ?string $summary, string $question): string
     {
         $cleanQuestion = strtolower($question);
+
+        // Check if user specifically asked who spoke
+        if (str_contains($cleanQuestion, 'who spoke') || str_contains($cleanQuestion, 'speakers') || str_contains($cleanQuestion, 'participants')) {
+            $speakers = collect($transcript)->pluck('speaker')->filter(fn ($s) => is_string($s) && $s !== '')->unique()->values()->all();
+            if (! empty($speakers)) {
+                return 'The following participants spoke in this meeting: '.implode(', ', $speakers).'.';
+            }
+        }
+
         $matchingCues = [];
 
         foreach ($transcript as $cue) {
@@ -163,9 +172,11 @@ PROMPT;
             }
         }
 
-        if (empty($matchingCues) && ! empty($transcript)) {
-            $matchingCues = array_slice($transcript, 0, 2);
+        if (empty($matchingCues)) {
+            return 'Not covered in this meeting.';
         }
+
+        $matchingCues = array_slice($matchingCues, 0, 2);
 
         $citations = [];
         foreach ($matchingCues as $cue) {
@@ -178,9 +189,7 @@ PROMPT;
             $citations[] = "At [{$ts}], **{$speaker}** explained: \"{$text}\"";
         }
 
-        $citationText = implode("\n\n", $citations);
-
-        return "Based on the meeting transcript:\n\n{$citationText}\n\nThis aligns with the primary decisions established during the meeting.";
+        return implode(' ', $citations);
     }
 
     /**
@@ -192,46 +201,58 @@ PROMPT;
             'sales' => <<<'PROMPT'
 You are a senior sales strategy copilot at Fathom.
 Synthesize the provided meeting transcript strictly from a Commercial & Revenue perspective.
-Structure your output in clean Markdown with these exact sections:
+
+Rules:
+- Structure your output in clean Markdown with these exact sections.
+- Under each section heading, provide a concise one-line headline, followed by 3 to 5 structured bullet points.
+- Do NOT write free-form narrative paragraphs.
+
 ## Deal Overview & Prospect Sentiment
-- Summarize buyer intent, key stakeholders present, urgency, and general sentiment.
+- 3 to 5 bullets summarizing buyer intent, key stakeholders present, urgency, and general sentiment.
 ## Customer Pain Points & Objections
-- List specific organizational friction, legacy limitations, or technical objections raised.
+- 3 to 5 bullets listing specific organizational friction, legacy limitations, or technical objections raised.
 ## Commercial & Pricing Discussion
-- Detail timeline expectations, budget constraints, contract scale, and procurement hurdles.
+- 3 to 5 bullets detailing timeline expectations, budget constraints, contract scale, and procurement hurdles.
 ## Next Steps & Commitments
-- Outline specific follow-ups, deliverables promised, and meeting deadlines with owner attributions.
-Keep the style crisp, data-driven, and high signal.
+- 3 to 5 bullets outlining specific follow-ups, deliverables promised, and meeting deadlines with owner attributions.
 PROMPT,
 
             'engineering' => <<<'PROMPT'
 You are a principal systems architect copilot at Fathom.
 Synthesize the provided meeting transcript strictly from a Technical & Systems Engineering perspective.
-Structure your output in clean Markdown with these exact sections:
+
+Rules:
+- Structure your output in clean Markdown with these exact sections.
+- Under each section heading, provide a concise one-line headline, followed by 3 to 5 structured bullet points.
+- Do NOT write free-form narrative paragraphs.
+
 ## Technical Architecture & Systems Impact
-- Core architectural decisions, system boundaries, and API/data flow specifications.
+- 3 to 5 bullets detailing core architectural decisions, system boundaries, and API/data flow specifications.
 ## Key Technical Decisions & Tradeoffs
-- Architectural choices made, alternatives rejected, performance/latency implications.
+- 3 to 5 bullets detailing architectural choices made, alternatives rejected, and performance/latency implications.
 ## Implementation Blockers & Risks
-- Security considerations, migration risks, edge cases, and testing dependencies.
+- 3 to 5 bullets detailing security considerations, migration risks, edge cases, and testing dependencies.
 ## Engineering Action Items
-- Concrete implementation tasks, assigned engineers, and immediate technical milestones.
-Keep the style concise, exact, and actionable for developers.
+- 3 to 5 bullets detailing concrete implementation tasks, assigned engineers, and immediate technical milestones.
 PROMPT,
 
             default => <<<'PROMPT'
 You are an executive meeting intelligence assistant at Fathom.
 Synthesize the provided meeting transcript into a comprehensive, high-value executive summary.
-Structure your output in clean Markdown with these exact sections:
+
+Rules:
+- Structure your output in clean Markdown with these exact sections.
+- Under each section heading, provide a concise one-line headline, followed by 3 to 5 structured bullet points.
+- Do NOT write free-form narrative paragraphs.
+
 ## Executive Summary
-- Concise 2-3 sentence strategic synopsis of the conversation and overall outcomes.
+- 3 to 5 bullets providing a strategic synopsis of the conversation and overall outcomes.
 ## Key Decisions
-- Bullet points detailing major decisions agreed upon by participants.
+- 3 to 5 bullets detailing major decisions agreed upon by participants.
 ## Discussion Highlights
-- Core themes, critical feedback, and pivotal discussion points.
+- 3 to 5 bullets highlighting core themes, critical feedback, and pivotal discussion points.
 ## Action Items
-- Bullet points detailing concrete next steps, assigned owners (@Name), and target timelines.
-Keep the style polished, professional, and easy to scan.
+- 3 to 5 bullets detailing concrete next steps, assigned owners (@Name), and target timelines.
 PROMPT,
         };
     }

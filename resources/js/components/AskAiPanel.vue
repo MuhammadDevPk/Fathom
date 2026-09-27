@@ -2,16 +2,15 @@
 import { useForm } from '@inertiajs/vue3';
 import {
     Bot,
-    Clock,
     HelpCircle,
     MessageSquare,
-    Play,
     Send,
     Sparkles,
     User,
 } from '@lucide/vue';
 import { nextTick, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
+import MarkdownRenderer from '@/components/MarkdownRenderer.vue';
 import type { QaItem } from '@/types';
 
 const props = withDefaults(
@@ -78,53 +77,6 @@ function handleKeydown(event: KeyboardEvent) {
             submitQuestion();
         }
     }
-}
-
-interface ParsedToken {
-    type: 'citation' | 'text';
-    text: string;
-    seconds?: number;
-}
-
-function parseAnswerTokens(answer: string): ParsedToken[] {
-    const tokens: ParsedToken[] = [];
-    const timestampRegex = /\[?(\b\d{1,2}:\d{2}\b)\]?/g;
-
-    let lastIndex = 0;
-    let match: RegExpExecArray | null;
-
-    while ((match = timestampRegex.exec(answer)) !== null) {
-        const matchStart = match.index;
-        const matchEnd = timestampRegex.lastIndex;
-
-        if (matchStart > lastIndex) {
-            tokens.push({
-                type: 'text',
-                text: answer.slice(lastIndex, matchStart),
-            });
-        }
-
-        const timeStr = match[1];
-        const [mins, secs] = timeStr.split(':').map(Number);
-        const totalSeconds = (mins || 0) * 60 + (secs || 0);
-
-        tokens.push({
-            type: 'citation',
-            text: timeStr,
-            seconds: totalSeconds,
-        });
-
-        lastIndex = matchEnd;
-    }
-
-    if (lastIndex < answer.length) {
-        tokens.push({
-            type: 'text',
-            text: answer.slice(lastIndex),
-        });
-    }
-
-    return tokens;
 }
 
 const quickPrompts = [
@@ -223,22 +175,11 @@ const quickPrompts = [
                                 </span>
                             </div>
 
-                            <!-- Tokenized Markdown Text with Clickable Citations -->
-                            <div class="space-y-2 leading-relaxed">
-                                <template v-for="(token, tIdx) in parseAnswerTokens(item.answer)" :key="tIdx">
-                                    <button
-                                        v-if="token.type === 'citation'"
-                                        type="button"
-                                        class="inline-flex items-center gap-1 rounded-md border border-sky-300 bg-sky-50 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-sky-700 transition-colors hover:bg-sky-600 hover:text-white cursor-pointer align-baseline mx-0.5 shadow-2xs dark:border-sky-800/80 dark:bg-sky-950/60 dark:text-sky-300"
-                                        title="Seek video to this moment"
-                                        @click="emit('seek', token.seconds!)"
-                                    >
-                                        <Play class="size-2.5 fill-current" />
-                                        {{ token.text }}
-                                    </button>
-                                    <span v-else class="whitespace-pre-wrap break-words">{{ token.text }}</span>
-                                </template>
-                            </div>
+                            <!-- Markdown Rendered Answer with Clickable Citations -->
+                            <MarkdownRenderer
+                                :content="item.answer"
+                                @seek="emit('seek', $event)"
+                            />
                         </div>
                     </div>
                 </div>
