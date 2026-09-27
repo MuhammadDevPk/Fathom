@@ -13,6 +13,10 @@ class HighlightController extends Controller
      */
     public function store(StoreHighlightRequest $request, Meeting $meeting): RedirectResponse
     {
+        if ($request->user()?->email === 'demo@fathom.test') {
+            abort(403, 'Demo account is read-only. Sign up for full access.');
+        }
+
         $validated = $request->validated();
         $validated['label'] = ! empty($validated['label']) ? (string) $validated['label'] : 'Key Moment';
 

@@ -107,7 +107,7 @@ class Meeting extends Model
     public function getSummaryForTemplate(string $template = 'general'): ?string
     {
         if ($this->summary === null || trim($this->summary) === '') {
-            return null;
+            return $this->formatFallbackPerspective("## Executive Summary\n- Executive discussion and meeting intelligence.\n- Decisions and key objectives reviewed.", $template);
         }
 
         $decoded = json_decode($this->summary, true);

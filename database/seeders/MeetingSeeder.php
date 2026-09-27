@@ -14,9 +14,9 @@ class MeetingSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::first() ?? User::factory()->create([
+        $user = User::firstWhere('email', 'demo@fathom.test') ?? User::factory()->create([
             'name' => 'Demo User',
-            'email' => 'demo@example.com',
+            'email' => 'demo@fathom.test',
         ]);
 
         // Meeting 1: Product & Engineering Sync
@@ -506,6 +506,134 @@ class MeetingSeeder extends Seeder
             'timestamp_seconds' => 325,
             'label' => 'Status Summary',
             'note' => 'Marcus summarized the budget dispute before pausing for the guest presentation',
+        ]);
+
+        // Meeting 4: Enterprise Architecture & Cloud Data Migration
+        $meeting4 = Meeting::create([
+            'user_id' => $user->id,
+            'title' => 'Enterprise Architecture & Cloud Data Migration Strategy',
+            'video_url' => '/videos/demo1.mp4',
+            'duration_seconds' => 180,
+            'transcript' => [
+                [
+                    'speaker' => 'Alex Rivera',
+                    'start' => 5.0,
+                    'end' => 25.0,
+                    'text' => 'Good morning team. Today we are locking in our cloud migration plan for the data warehouse and core APIs.',
+                ],
+                [
+                    'speaker' => 'Sarah Lin',
+                    'start' => 26.0,
+                    'end' => 60.0,
+                    'text' => 'From the infrastructure side, we completed the pilot benchmarks. Zero-downtime replication is feasible if we stage cutovers over two weekends.',
+                ],
+                [
+                    'speaker' => 'David Kim',
+                    'start' => 61.0,
+                    'end' => 110.0,
+                    'text' => 'Compliance has signed off on the multi-region residency requirements. We need final sign-off on the disaster recovery failover latency.',
+                ],
+                [
+                    'speaker' => 'Alex Rivera',
+                    'start' => 111.0,
+                    'end' => 165.0,
+                    'text' => 'Understood. Sarah will lead the canary dry-run on Tuesday, and David will finalize the security audit ledger by Thursday.',
+                ],
+            ],
+            'summary' => json_encode([
+                'general' => "## Executive Summary\nEngineering leads reviewed the enterprise cloud data migration strategy. Zero-downtime database replication benchmarks were approved for weekend execution.\n\n### Key Discussion Points\n- **Replication Benchmarks:** Infrastructure confirmed dry-run performance meets SLAs with sub-second replication lag.\n- **Data Residency & Compliance:** Multi-region failover protocols comply with international privacy constraints.\n- **Cutover Scheduling:** Migration divided into two non-business-hour phases to eliminate disruption.\n\n### Next Steps\n- Execute canary dry-run with synthetic traffic before the final database cutover.",
+                'sales' => "## Deal Overview & Platform Availability\nEnterprise customers requiring 99.99% availability will benefit from active-active cloud migration capabilities.\n\n### Commercial Impact\n- Unlocks Tier-1 enterprise deals with strict ISO/SOC-2 multi-region residency commitments.\n- Mitigates compliance objection blockers during enterprise procurement cycles.",
+                'engineering' => "## Technical Architecture & Systems Impact\nDual-write replication pipeline deployed across Kubernetes clusters.\n\n### Implementation Tasks & Risks\n- **CDC Pipeline:** Verify Change Data Capture streaming latency remains under 50ms during peak sync.\n- **Failover:** Automated health probes validate DNS switchover within 30 seconds.",
+            ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            'summary_template' => 'general',
+            'action_items' => [
+                [
+                    'id' => 1,
+                    'task' => 'Execute canary cutover simulation in staging cluster',
+                    'assignee' => 'Sarah Lin',
+                    'completed' => true,
+                ],
+                [
+                    'id' => 2,
+                    'task' => 'Finalize security audit ledger for compliance review',
+                    'assignee' => 'David Kim',
+                    'completed' => false,
+                ],
+            ],
+        ]);
+
+        Highlight::create([
+            'meeting_id' => $meeting4->id,
+            'timestamp_seconds' => 26,
+            'label' => 'Architecture Decision',
+            'note' => 'Zero-downtime replication benchmark verified for two-weekend cutover',
+        ]);
+        Highlight::create([
+            'meeting_id' => $meeting4->id,
+            'timestamp_seconds' => 111,
+            'label' => 'Cutover Milestone',
+            'note' => 'Scheduled canary dry-run and security ledger sign-off timeline',
+        ]);
+
+        // Meeting 5: Customer Success & Account Growth
+        $meeting5 = Meeting::create([
+            'user_id' => $user->id,
+            'title' => 'Customer Success & Account Growth: Q3 Executive Review',
+            'video_url' => '/videos/demo2.mp4',
+            'duration_seconds' => 220,
+            'transcript' => [
+                [
+                    'speaker' => 'Elena Rostova',
+                    'start' => 4.0,
+                    'end' => 30.0,
+                    'text' => 'Welcome everyone. In Q3 our net revenue retention reached 128%, driven primarily by expansion in intelligent meeting copilot seats.',
+                ],
+                [
+                    'speaker' => 'Marcus Vance',
+                    'start' => 31.0,
+                    'end' => 75.0,
+                    'text' => 'Enterprise accounts highlight that meeting summary templates and timestamp search cut post-meeting documentation time by over 4 hours weekly per manager.',
+                ],
+                [
+                    'speaker' => 'Elena Rostova',
+                    'start' => 76.0,
+                    'end' => 135.0,
+                    'text' => 'Our target for Q4 is rolling out personalized AI coaching and onboarding 20 new high-volume enterprise pilots.',
+                ],
+            ],
+            'summary' => json_encode([
+                'general' => "## Executive Summary\nCustomer Success presented Q3 executive outcomes, celebrating 128% Net Revenue Retention. Expansion was propelled by high customer engagement with Fathom's automated summaries and timestamped transcripts.\n\n### Key Discussion Points\n- **Retention & Expansion:** NRR reached 128% across high-touch enterprise accounts.\n- **Productivity Gains:** Managers reported 4+ hours saved weekly on administrative meeting notes.\n- **Q4 Targets:** Launching 20 targeted enterprise pilots focused on sales intelligence and engineering alignment.\n\n### Action Items\n- Deliver enterprise feedback deck to product engineering.\n- Finalize Q4 pilot onboarding playbooks.",
+                'sales' => "## Deal Expansion & Pipeline Velocity\nAccount growth metrics demonstrate significant expansion willingness across existing customer cohorts.\n\n### Commercial Highlights\n- Average customer account expanded by 32% within 6 months of initial deployment.\n- Strong ROI proof points accelerate executive procurement approvals.",
+                'engineering' => "## Product Feedback & System Scaling\nHigh user concurrency during business hours requires horizontal scaling of summary generation workers.\n\n### Infrastructure Considerations\n- Queue throughput for Llama-3 inference pipelines must scale to support 20 concurrent enterprise pilots.",
+            ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            'summary_template' => 'general',
+            'action_items' => [
+                [
+                    'id' => 1,
+                    'task' => 'Deliver enterprise feedback deck to product engineering',
+                    'assignee' => 'Marcus Vance',
+                    'completed' => true,
+                ],
+                [
+                    'id' => 2,
+                    'task' => 'Finalize Q4 onboarding playbooks for enterprise pilots',
+                    'assignee' => 'Elena Rostova',
+                    'completed' => false,
+                ],
+            ],
+        ]);
+
+        Highlight::create([
+            'meeting_id' => $meeting5->id,
+            'timestamp_seconds' => 4,
+            'label' => 'Revenue Milestone',
+            'note' => 'Announced 128% Net Revenue Retention for Q3',
+        ]);
+        Highlight::create([
+            'meeting_id' => $meeting5->id,
+            'timestamp_seconds' => 31,
+            'label' => 'Customer Metric',
+            'note' => '4+ hours saved weekly per manager using automated meeting intelligence',
         ]);
     }
 }

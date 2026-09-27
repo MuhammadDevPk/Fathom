@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     ArrowRight,
@@ -7,6 +7,7 @@ import {
     Calendar,
     Clock,
     ListTodo,
+    Share2,
     Sparkles,
     Video,
 } from '@lucide/vue';
@@ -17,6 +18,7 @@ import {
     TabsTrigger,
 } from 'reka-ui';
 import { computed, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import ActionItemsList from '@/components/ActionItemsList.vue';
 import HighlightsList from '@/components/HighlightsList.vue';
 import SummaryPanel from '@/components/SummaryPanel.vue';
@@ -35,6 +37,7 @@ const props = withDefaults(
         action_items?: ActionItem[];
         qa_history?: QaItem[];
         action_item_state?: Record<string, boolean>;
+        share_url?: string;
         isDemo?: boolean;
     }>(),
     {
@@ -43,9 +46,39 @@ const props = withDefaults(
         action_items: () => [],
         qa_history: () => [],
         action_item_state: () => ({}),
+        share_url: undefined,
         isDemo: false,
     },
 );
+
+const page = usePage();
+const user = computed(() => page.props.auth?.user);
+const isGuest = computed(() => Boolean(props.isDemo) && !user.value);
+
+async function copyShareLink() {
+    if (!props.share_url) {
+        return;
+    }
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(props.share_url);
+        } else {
+            const textArea = document.createElement('textarea');
+            textArea.value = props.share_url;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            textArea.remove();
+        }
+        toast.success('Link copied');
+    } catch {
+        toast.error('Failed to copy link');
+    }
+}
 
 const videoPlayerRef = ref<InstanceType<typeof VideoPlayer> | null>(null);
 
@@ -108,10 +141,10 @@ const formattedDate = computed(() => {
 <template>
     <Head :title="`${meeting.title} - Fathom`" />
 
-    <div :class="['relative flex flex-1 flex-col overflow-hidden p-4 md:p-5 lg:p-6 bg-gradient-to-b from-sky-50/30 via-transparent to-transparent', isDemo ? 'h-screen max-h-screen' : 'h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)]']">
+    <div :class="['relative flex flex-1 flex-col overflow-hidden p-4 md:p-5 lg:p-6 bg-gradient-to-b from-sky-50/30 via-transparent to-transparent', isGuest ? 'h-screen max-h-screen' : 'h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)]']">
         <!-- Demo Banner -->
         <div
-            v-if="isDemo"
+            v-if="isGuest"
             class="mb-3 flex shrink-0 items-center justify-between gap-3 rounded-2xl border border-sky-200/90 bg-gradient-to-r from-sky-50 via-sky-50/70 to-amber-50/70 px-4 py-2 shadow-2xs dark:border-sky-800/80 dark:bg-zinc-900"
         >
             <div class="flex items-center gap-2 min-w-0">
@@ -138,7 +171,7 @@ const formattedDate = computed(() => {
 
         <!-- Top Nav & Meeting Title Header -->
         <div class="flex shrink-0 flex-col gap-2 border-b border-zinc-200/80 pb-3 dark:border-zinc-800">
-            <div v-if="!isDemo">
+            <div v-if="!isDemo || user">
                 <Link
                     href="/meetings"
                     class="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-400 transition-colors duration-200 hover:text-sky-600 dark:text-zinc-500 dark:hover:text-sky-400"
@@ -176,6 +209,18 @@ const formattedDate = computed(() => {
                         <Video class="size-3.5 text-emerald-600 dark:text-emerald-400" />
                         Synced Media
                     </span>
+
+                    <!-- Copy share link button (authenticated view only) -->
+                    <button
+                        v-if="user && share_url"
+                        type="button"
+                        @click="copyShareLink"
+                        class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-zinc-200/90 bg-white px-3.5 py-1 text-xs font-semibold text-zinc-700 shadow-2xs transition-all hover:bg-zinc-50 hover:text-zinc-900 active:scale-95 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+                        title="Copy public share link"
+                    >
+                        <Share2 class="size-3.5 text-sky-600 dark:text-sky-400" />
+                        <span>Copy share link</span>
+                    </button>
                 </div>
             </div>
         </div>

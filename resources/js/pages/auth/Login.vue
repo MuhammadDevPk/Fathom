@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -157,4 +157,17 @@ defineProps<{
             </TextLink>
         </div>
     </Form>
+
+    <!-- Ghost Demo Button Below Form -->
+    <div class="mt-4 pt-4 border-t border-zinc-200/80 text-center dark:border-zinc-800">
+        <Link
+            method="post"
+            href="/demo/login"
+            as="button"
+            type="button"
+            class="inline-flex cursor-pointer items-center justify-center gap-1.5 text-xs font-semibold text-zinc-500 transition-colors duration-200 hover:text-sky-600 active:scale-95 dark:text-zinc-400 dark:hover:text-sky-400"
+        >
+            <span>Or try the demo without an account &rarr;</span>
+        </Link>
+    </div>
 </template>

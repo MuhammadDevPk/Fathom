@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
 Route::get('demo/meeting', [MeetingController::class, 'demo'])->name('demo.meeting');
+Route::post('demo/login', [MeetingController::class, 'demoLogin'])->middleware('throttle:10,1')->name('demo.login');
+Route::get('share/{meeting}', [MeetingController::class, 'share'])->name('meetings.share');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', [MeetingController::class, 'index'])->name('dashboard');

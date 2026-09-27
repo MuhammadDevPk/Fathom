@@ -198,10 +198,13 @@ const techStack = [
                             Sign in
                         </Link>
                         <Link
-                            href="/meetings"
-                            class="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-sky-500 via-sky-600 to-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all duration-200 hover:opacity-95 active:scale-95"
+                            method="post"
+                            href="/demo/login"
+                            as="button"
+                            type="button"
+                            class="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-sky-500 via-sky-600 to-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all duration-200 hover:opacity-95 active:scale-95 cursor-pointer"
                         >
-                            <span>Try the Demo</span>
+                            <span>Try Demo — no signup</span>
                             <ArrowRight class="size-3" />
                         </Link>
                     </template>
@@ -235,18 +238,28 @@ const techStack = [
                     <!-- Dual CTAs -->
                     <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
                         <Link
-                            href="/meetings"
+                            :href="register()"
                             class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-500 via-sky-600 to-amber-500 px-6 py-3.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:shadow-lg hover:shadow-sky-500/20 active:scale-95 cursor-pointer"
                         >
-                            <span>Try the Demo</span>
+                            <span>Get Started</span>
                             <ArrowRight class="size-4" />
+                        </Link>
+
+                        <Link
+                            method="post"
+                            href="/demo/login"
+                            as="button"
+                            type="button"
+                            class="inline-flex items-center gap-2 rounded-full border border-sky-300/80 bg-sky-50/80 px-6 py-3.5 text-sm font-semibold text-sky-800 shadow-2xs transition-all duration-200 hover:bg-sky-100/90 hover:border-sky-400 active:scale-95 cursor-pointer dark:border-sky-800 dark:bg-sky-950/60 dark:text-sky-300 dark:hover:bg-sky-900/60"
+                        >
+                            <Sparkles class="size-4 text-sky-600 dark:text-sky-400" />
+                            <span>Try Demo — no signup</span>
                         </Link>
 
                         <a
                             href="#how-it-works"
                             class="inline-flex items-center gap-2 rounded-full border border-zinc-200/90 bg-white px-6 py-3.5 text-sm font-semibold text-zinc-800 shadow-2xs transition-all duration-200 hover:bg-zinc-50 active:scale-95 cursor-pointer dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
                         >
-                            <Sparkles class="size-4 text-amber-500" />
                             <span>How it works</span>
                         </a>
                     </div>

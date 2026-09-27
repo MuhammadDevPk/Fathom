@@ -38,6 +38,7 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 - [x] Phase 7.7: Ask AI Intelligence + Markdown Rendering (Scoped LLM prompt to question depth, structured headline + 3–5 bullets per summary section, lightweight MarkdownRenderer with markdown-it, escaped raw HTML, and preserved interactive timestamp pills)
 - [x] Phase 7.8: Live Demo Embed on Landing Page (Public `/demo/meeting` route with shortest meeting, browser mockup iframe with skeleton loader, fullscreen toggle via useFullscreen, and demo read-only guards)
 - [x] Phase 7.9: Additional Fixes (Action items checkbox session persistence `meeting_{id}_action_items`, deterministic 10-entry speakerColors palette, aligned MeetingFactory with updated seeder)
+- [x] Phase 7.10: Guest Demo Access + Shareable Meeting Links (One-click demo login without signup, rate-limited POST /demo/login, demo@fathom.test seeded with 5 meetings, signed public share URL per meeting with 403 signature check & session persistence, read-only Show.vue with copy share link button & vue-sonner toast, glassmorphic play button overlay, and comprehensive mutation guards)
 - [x] Phase 8: Production README creation and verification (13-section technical assessment documentation with exact dependency versions, data model, request flow, deployment guide, and test statistics)
 
 ---
@@ -100,5 +101,22 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 
 ---
 
+## Phase 7.10: Guest Demo Access + Shareable Meeting Links
+- **Part 1 — Guest Demo Login ([`routes/web.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/routes/web.php) & [`MeetingController.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/app/Http/Controllers/MeetingController.php)):**
+  - Created seeded account `demo@fathom.test` in [`database/seeders/MeetingSeeder.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/database/seeders/MeetingSeeder.php) with all 5 realistic meetings assigned, complete with rich multi-speaker transcripts, multi-template summaries, action items, and timestamped highlights.
+  - Added route `POST /demo/login` named `demo.login` with `throttle:10,1` rate limiting (10 requests per minute). Automatically authenticates `demo@fathom.test`, regenerates session, and redirects to `/meetings`.
+  - Added one-click **"Try Demo — no signup"** secondary CTA on landing page hero and top nav ([`resources/js/pages/Welcome.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Welcome.vue)).
+  - Added ghost buttons **"Or try the demo without an account →"** below login form ([`resources/js/pages/auth/Login.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/auth/Login.vue)) and register form ([`resources/js/pages/auth/Register.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/auth/Register.vue)).
+- **Part 2 — Shareable Meeting Links ([`MeetingController.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/app/Http/Controllers/MeetingController.php) & [`Show.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/pages/Meetings/Show.vue)):**
+  - Added public GET route `GET /share/{meeting}` named `meetings.share` outside `auth` middleware.
+  - Generates indefinitely valid signed URLs via `URL::signedRoute('meetings.share', ['meeting' => $meeting->id])`. Validates signature on receipt with `$request->hasValidSignature()`, persisting validation state in session key `share_verified_{id}` so subsequent partial deferred prop requests and template switches remain authenticated. Returns 403 on invalid or tampered signatures.
+  - Renders existing `Show.vue` in read-only mode (`isDemo: true`). Guests and demo users can play synchronized video, click transcript cues, switch between summary templates (`general`, `sales`, `engineering`), and switch tabs.
+  - Mutation endpoints ([`MeetingController::toggleActionItem`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/app/Http/Controllers/MeetingController.php), [`MeetingController::generateSummary`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/app/Http/Controllers/MeetingController.php), [`MeetingController::ask`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/app/Http/Controllers/MeetingController.php), [`HighlightController::store`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/app/Http/Controllers/HighlightController.php)) explicitly block `demo@fathom.test` with HTTP 403 Forbidden responses.
+  - Added **"Copy share link"** button with `Share2` icon in meeting detail header (authenticated view only). Copies signed URL to clipboard via `navigator.clipboard` (with fallback) and triggers a `vue-sonner` toast notification (`"Link copied"`).
+  - Enhanced [`VideoPlayer.vue`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/resources/js/components/VideoPlayer.vue) with a glassmorphic play button overlay when paused, guaranteeing video always displays a visible interactive play trigger.
+  - Added comprehensive test coverage in [`tests/Feature/MeetingDemoAndShareTest.php`](file:///Users/muhammad/Personal/Projects/Personal%20Projects/8x/Fathom/tests/Feature/MeetingDemoAndShareTest.php).
+
+---
+
 ## 4. Current Next Step
-Phase 7.8 and Phase 7.9 complete and verified (Pest 54/54 passing, Pint clean, PHPStan 0 errors, Vue TSC clean, VP Build clean). Ready for user review.
+Phase 7.10 complete and verified (Pest 62/62 passing, Pint clean, PHPStan 0 errors, Vue TSC clean, VP Build clean). Ready for user review.

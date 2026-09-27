@@ -84,7 +84,7 @@ it('allows dispatching summary generation through controller endpoint', function
 
     $this->seed(MeetingSeeder::class);
     $meeting = Meeting::firstOrFail();
-    $user = User::first() ?? User::factory()->create();
+    $user = User::factory()->create();
 
     $response = $this->actingAs($user)->post(route('meetings.summary.generate', $meeting), [
         'template' => 'engineering',

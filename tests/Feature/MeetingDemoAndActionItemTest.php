@@ -31,7 +31,7 @@ it('renders the public demo meeting route without auth for the shortest seeded m
 it('persists action item checkbox toggle in session for authenticated users', function () {
     $this->seed(MeetingSeeder::class);
     $meeting = Meeting::firstOrFail();
-    $user = User::first() ?? User::factory()->create();
+    $user = User::factory()->create();
 
     // Toggle item at index 0 to true
     $response = $this->actingAs($user)
@@ -82,7 +82,7 @@ it('redirects unauthenticated guests attempting to toggle action items to login'
 it('validates action item toggle input parameters', function () {
     $this->seed(MeetingSeeder::class);
     $meeting = Meeting::firstOrFail();
-    $user = User::first() ?? User::factory()->create();
+    $user = User::factory()->create();
 
     $response = $this->actingAs($user)
         ->post(route('meetings.action-items.toggle', $meeting), [

@@ -17,11 +17,11 @@ withDefaults(defineProps<Props>(), {
 });
 
 const page = usePage();
-const isDemo = computed(() => Boolean(page.props.isDemo));
+const isGuestView = computed(() => Boolean(page.props.isDemo) && !page.props.auth?.user);
 </script>
 
 <template>
-    <div v-if="isDemo" class="min-h-screen bg-white dark:bg-zinc-950 overflow-hidden">
+    <div v-if="isGuestView" class="min-h-screen bg-white dark:bg-zinc-950 overflow-hidden">
         <slot />
         <Toaster />
     </div>
