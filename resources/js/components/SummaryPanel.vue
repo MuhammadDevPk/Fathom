@@ -45,7 +45,10 @@ watch(
 );
 
 function switchTemplate(template: string) {
-    if (selectedTemplate.value === template && !isReloading.value && props.summary) {
+    if (isReloading.value) {
+        return;
+    }
+    if (selectedTemplate.value === template && props.summary) {
         return;
     }
 
@@ -201,10 +204,17 @@ function getSectionIconBg(title: string): string {
                     <div class="flex size-7 items-center justify-center rounded-lg bg-gradient-to-tr from-sky-500 to-amber-500 text-white shadow-xs">
                         <Sparkles class="size-4" />
                     </div>
-                    <div>
+                    <div class="flex items-center gap-2">
                         <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
                             Executive Intelligence
                         </h3>
+                        <span
+                            v-if="isReloading"
+                            class="inline-flex items-center gap-1 rounded-full border border-sky-200/70 bg-sky-50 px-2 py-0.5 text-[10px] font-semibold text-sky-700 dark:border-sky-800/60 dark:bg-sky-950/60 dark:text-sky-300"
+                        >
+                            <RefreshCw class="size-2.5 animate-spin" />
+                            <span>Updating...</span>
+                        </span>
                     </div>
                 </div>
 

@@ -14,8 +14,9 @@ uses(RefreshDatabase::class);
 it('serves a deferred summary prop on meeting detail', function () {
     $this->seed(MeetingSeeder::class);
     $meeting = Meeting::firstOrFail();
+    $user = User::first() ?? User::factory()->create();
 
-    $response = $this->get(route('meetings.show', $meeting));
+    $response = $this->actingAs($user)->get(route('meetings.show', $meeting));
 
     $response->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
@@ -32,12 +33,13 @@ it('serves a deferred summary prop on meeting detail', function () {
 it('serves tailored template summaries on partial reload', function () {
     $this->seed(MeetingSeeder::class);
     $meeting = Meeting::firstOrFail();
+    $user = User::first() ?? User::factory()->create();
 
     $manifest = public_path('build/manifest.json');
     $version = file_exists($manifest) ? hash_file('xxh128', $manifest) : null;
 
     // Partial reload for sales template
-    $response = $this->get(route('meetings.show', ['meeting' => $meeting, 'template' => 'sales']), array_filter([
+    $response = $this->actingAs($user)->get(route('meetings.show', ['meeting' => $meeting, 'template' => 'sales']), array_filter([
         'X-Inertia' => 'true',
         'X-Inertia-Version' => $version,
         'X-Inertia-Partial-Component' => 'Meetings/Show',
@@ -82,8 +84,9 @@ it('allows dispatching summary generation through controller endpoint', function
 
     $this->seed(MeetingSeeder::class);
     $meeting = Meeting::firstOrFail();
+    $user = User::first() ?? User::factory()->create();
 
-    $response = $this->post(route('meetings.summary.generate', $meeting), [
+    $response = $this->actingAs($user)->post(route('meetings.summary.generate', $meeting), [
         'template' => 'engineering',
     ]);
 

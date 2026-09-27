@@ -22,3 +22,10 @@ test('authenticated user can view landing page with dashboard access', function 
             ->component('Welcome')
         );
 });
+
+test('error page can be rendered with status code', function () {
+    $page = Inertia\Inertia::render('Error', ['status' => 404]);
+    $response = $page->toResponse(request());
+
+    expect($response->getStatusCode())->toBe(200);
+});

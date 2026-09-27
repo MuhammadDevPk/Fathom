@@ -63,7 +63,7 @@ it('filters meetings by search term', function () {
     ]);
 
     // Search by title match
-    $response = $this->get(route('meetings.index', ['search' => 'Kubernetes']));
+    $response = $this->actingAs($user)->get(route('meetings.index', ['search' => 'Kubernetes']));
     $response->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->component('Meetings/Index')
@@ -72,7 +72,7 @@ it('filters meetings by search term', function () {
         );
 
     // Search by transcript dialogue match
-    $response2 = $this->get(route('meetings.index', ['search' => 'new ARR']));
+    $response2 = $this->actingAs($user)->get(route('meetings.index', ['search' => 'new ARR']));
     $response2->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->component('Meetings/Index')

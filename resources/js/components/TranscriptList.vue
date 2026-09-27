@@ -9,6 +9,7 @@ import {
     ScrollAreaViewport,
 } from 'reka-ui';
 import { ref, watch } from 'vue';
+import { toast } from 'vue-sonner';
 import HighlightsList from '@/components/HighlightsList.vue';
 import {
     Dialog,
@@ -72,6 +73,11 @@ function submitHighlight() {
             isHighlightDialogOpen.value = false;
             highlightForm.reset();
             activeBookmarkCue.value = null;
+            toast.success('Highlight bookmarked successfully.');
+        },
+        onError: (errors) => {
+            const err = errors.note || errors.timestamp_seconds || errors.label || 'Unable to save highlight.';
+            toast.error(err);
         },
     });
 }
@@ -334,6 +340,9 @@ function getSpeakerBadgeClass(speaker: string): string {
                         ></textarea>
                         <p v-if="highlightForm.errors.note" class="mt-1 text-xs text-rose-500">
                             {{ highlightForm.errors.note }}
+                        </p>
+                        <p v-if="highlightForm.errors.timestamp_seconds" class="mt-1 text-xs text-rose-500">
+                            {{ highlightForm.errors.timestamp_seconds }}
                         </p>
                     </div>
 

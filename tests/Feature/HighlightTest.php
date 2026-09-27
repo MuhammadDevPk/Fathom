@@ -36,8 +36,9 @@ it('creates a highlight for a meeting', function () {
 it('lists highlights on the meeting detail page', function () {
     $this->seed(MeetingSeeder::class);
     $meeting = Meeting::firstOrFail();
+    $user = User::first() ?? User::factory()->create();
 
-    $response = $this->get(route('meetings.show', $meeting));
+    $response = $this->actingAs($user)->get(route('meetings.show', $meeting));
 
     $response->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page

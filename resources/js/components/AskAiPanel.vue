@@ -74,7 +74,9 @@ function submitQuestion(customQuestion?: string) {
 function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
-        submitQuestion();
+        if (!form.processing) {
+            submitQuestion();
+        }
     }
 }
 
@@ -195,7 +197,7 @@ const quickPrompts = [
                 <!-- User Question Bubble -->
                 <div class="flex justify-end">
                     <div class="flex max-w-[85%] items-start gap-2.5">
-                        <div class="rounded-2xl rounded-tr-xs bg-zinc-900 px-4 py-2.5 text-xs text-white shadow-xs dark:bg-zinc-100 dark:text-zinc-900">
+                        <div class="rounded-2xl rounded-tr-xs bg-zinc-900 px-4 py-2.5 text-xs text-white shadow-xs dark:bg-zinc-100 dark:text-zinc-900 break-words">
                             {{ item.question }}
                         </div>
                         <div class="flex size-6 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-zinc-600 text-[10px] font-semibold dark:bg-zinc-700 dark:text-zinc-200">
@@ -234,7 +236,7 @@ const quickPrompts = [
                                         <Play class="size-2.5 fill-current" />
                                         {{ token.text }}
                                     </button>
-                                    <span v-else class="whitespace-pre-wrap">{{ token.text }}</span>
+                                    <span v-else class="whitespace-pre-wrap break-words">{{ token.text }}</span>
                                 </template>
                             </div>
                         </div>

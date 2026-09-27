@@ -7,10 +7,26 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-it('renders the meetings index page with 5 seeded meeting cards', function () {
-    $this->seed(MeetingSeeder::class);
-
+it('redirects unauthenticated guests accessing meetings index to the login page', function () {
     $response = $this->get(route('meetings.index'));
+
+    $response->assertRedirect(route('login'));
+});
+
+it('redirects unauthenticated guests accessing meeting detail to the login page', function () {
+    $this->seed(MeetingSeeder::class);
+    $meeting = Meeting::firstOrFail();
+
+    $response = $this->get(route('meetings.show', $meeting));
+
+    $response->assertRedirect(route('login'));
+});
+
+it('renders the meetings index page with 5 seeded meeting cards for authenticated users', function () {
+    $this->seed(MeetingSeeder::class);
+    $user = User::first() ?? User::factory()->create();
+
+    $response = $this->actingAs($user)->get(route('meetings.index'));
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -28,11 +44,12 @@ it('renders the meetings index page with 5 seeded meeting cards', function () {
         );
 });
 
-it('renders meeting detail view with video, transcript, and summary', function () {
+it('renders meeting detail view with video, transcript, and summary for authenticated users', function () {
     $this->seed(MeetingSeeder::class);
     $meeting = Meeting::firstOrFail();
+    $user = User::first() ?? User::factory()->create();
 
-    $response = $this->get(route('meetings.show', $meeting));
+    $response = $this->actingAs($user)->get(route('meetings.show', $meeting));
 
     $response->assertOk()
         ->assertInertia(fn ($page) => $page

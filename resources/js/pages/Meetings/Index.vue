@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Calendar, Search, Sparkles, Video, X } from '@lucide/vue';
+import { Calendar, Loader2, Search, Sparkles, Video, X } from '@lucide/vue';
 import { useDebounceFn } from '@vueuse/core';
 import { ref, watch } from 'vue';
 import MeetingCard from '@/components/MeetingCard.vue';
@@ -14,12 +14,17 @@ const props = defineProps<{
 }>();
 
 const searchTerm = ref(props.filters?.search ?? '');
+const isSearching = ref(false);
 
 const performSearch = useDebounceFn((term: string) => {
+    isSearching.value = true;
     router.reload({
         only: ['meetings'],
         data: { search: term.trim() ? term.trim() : undefined },
         replace: true,
+        onFinish: () => {
+            isSearching.value = false;
+        },
     });
 }, 300);
 
@@ -81,7 +86,8 @@ defineOptions({
         <div class="relative">
             <div class="relative flex items-center">
                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400">
-                    <Search class="size-4" />
+                    <Loader2 v-if="isSearching" class="size-4 animate-spin text-sky-500" />
+                    <Search v-else class="size-4" />
                 </div>
                 <input
                     v-model="searchTerm"
@@ -104,7 +110,10 @@ defineOptions({
         <!-- Meeting Cards Grid -->
         <div
             v-if="meetings.data.length > 0"
-            class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+            :class="[
+                'grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 transition-opacity duration-200',
+                isSearching ? 'opacity-60 pointer-events-none' : '',
+            ]"
         >
             <MeetingCard
                 v-for="meeting in meetings.data"
