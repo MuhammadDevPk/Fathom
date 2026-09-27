@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     Bookmark,
+    Bot,
     Calendar,
     Clock,
     ListTodo,
@@ -17,12 +18,13 @@ import {
 } from 'reka-ui';
 import { computed, ref } from 'vue';
 import ActionItemsList from '@/components/ActionItemsList.vue';
+import AskAiPanel from '@/components/AskAiPanel.vue';
 import HighlightsList from '@/components/HighlightsList.vue';
 import SummaryPanel from '@/components/SummaryPanel.vue';
 import TranscriptList from '@/components/TranscriptList.vue';
 import VideoPlayer from '@/components/VideoPlayer.vue';
 import { useTranscriptSync } from '@/composables/useTranscriptSync';
-import type { ActionItem, HighlightItem, MeetingDetail, TranscriptCue } from '@/types';
+import type { ActionItem, HighlightItem, MeetingDetail, QaItem, TranscriptCue } from '@/types';
 
 const props = withDefaults(
     defineProps<{
@@ -32,11 +34,13 @@ const props = withDefaults(
         active_template?: string;
         highlights?: HighlightItem[];
         action_items?: ActionItem[];
+        qa_history?: QaItem[];
     }>(),
     {
         active_template: 'general',
         highlights: () => [],
         action_items: () => [],
+        qa_history: () => [],
     },
 );
 
@@ -48,11 +52,14 @@ const { activeCueIndex, seekToCue } = useTranscriptSync(
 );
 
 function seekToTimestamp(seconds: number) {
-    const el = videoPlayerRef.value?.videoElement;
-    if (el) {
-        el.currentTime = seconds;
-        el.play().catch(() => {});
-    }
+    const list = props.transcript || [];
+    const cue = list.find((c) => seconds >= c.start && seconds <= c.end) || {
+        start: seconds,
+        end: seconds + 3,
+        speaker: 'Meeting',
+        text: '',
+    };
+    seekToCue(cue);
 }
 
 const activePanelTab = ref('summary');
@@ -190,6 +197,20 @@ const formattedDate = computed(() => {
                                         {{ highlights.length }}
                                     </span>
                                 </TabsTrigger>
+
+                                <TabsTrigger
+                                    value="ask-ai"
+                                    class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all cursor-pointer data-[state=active]:bg-white data-[state=active]:text-zinc-900 data-[state=active]:shadow-xs dark:text-zinc-400 dark:data-[state=active]:bg-zinc-700 dark:data-[state=active]:text-zinc-100"
+                                >
+                                    <Bot class="size-3.5 text-sky-500" />
+                                    <span>Ask AI</span>
+                                    <span
+                                        v-if="qa_history.length > 0"
+                                        class="rounded-full bg-sky-100 px-1.5 py-0.2 text-[10px] text-sky-700 dark:bg-sky-950 dark:text-sky-300"
+                                    >
+                                        {{ qa_history.length }}
+                                    </span>
+                                </TabsTrigger>
                             </TabsList>
                         </div>
 
@@ -217,6 +238,15 @@ const formattedDate = computed(() => {
                                     @seek="seekToTimestamp"
                                 />
                             </div>
+                        </TabsContent>
+
+                        <!-- Tab 4: Ask AI Assistant -->
+                        <TabsContent value="ask-ai" class="focus:outline-none">
+                            <AskAiPanel
+                                :meeting-id="meeting.id"
+                                :qa-history="qa_history"
+                                @seek="seekToTimestamp"
+                            />
                         </TabsContent>
                     </TabsRoot>
                 </div>

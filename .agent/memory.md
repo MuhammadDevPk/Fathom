@@ -31,10 +31,10 @@ Build and ship the **Fathom** meeting intelligence MVP featuring:
 - [x] Phase 4: Video-to-transcript playback synchronization (click-to-seek, active cue highlighting, smooth auto-scroll, useTranscriptSync composable, spacebar play/pause shortcut)
 - [x] Phase 5: AI Summary + Template Switching (Reka UI Tabs, Inertia v3 deferred props, partial reloads via router.reload, queued GenerateMeetingSummary job with GroqClient and graceful offline fallback)
 - [x] Phase 6: Action Items + Highlights (ActionItemsList with session checkboxes, Reka UI highlight dialog, StoreHighlightRequest validation, side panel & tab list, click-to-seek)
-- [ ] Phase 7: Meeting Q&A assistant tab with time-stamped video citations
-- [ ] Phase 8: Global dashboard search and listing view
+- [x] Phase 7: Ask AI + Global Search (AskAiPanel with timestamp citations and seek sync, session-based Q&A history, AnswerMeetingQuestion queued job, GroqClient.answerQuestion, debounced live search with scopeSearch)
+- [ ] Phase 8: Global dashboard search and listing view (Refinements, final polish & verification)
 
 ---
 
 ## 4. Current Next Step
-Awaiting user approval on Phase 6 completion before proceeding to Phase 7.
+Phase 7 complete. Awaiting user approval before proceeding to Phase 8.

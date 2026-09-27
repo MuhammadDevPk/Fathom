@@ -1,12 +1,36 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { Calendar, Sparkles, Video } from '@lucide/vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { Calendar, Search, Sparkles, Video, X } from '@lucide/vue';
+import { useDebounceFn } from '@vueuse/core';
+import { ref, watch } from 'vue';
 import MeetingCard from '@/components/MeetingCard.vue';
 import type { PaginatedMeetings } from '@/types';
 
-defineProps<{
+const props = defineProps<{
     meetings: PaginatedMeetings;
+    filters?: {
+        search?: string;
+    };
 }>();
+
+const searchTerm = ref(props.filters?.search ?? '');
+
+const performSearch = useDebounceFn((term: string) => {
+    router.reload({
+        only: ['meetings'],
+        data: { search: term.trim() ? term.trim() : undefined },
+        replace: true,
+    });
+}, 300);
+
+watch(searchTerm, (newVal) => {
+    performSearch(newVal);
+});
+
+function clearSearch() {
+    searchTerm.value = '';
+    performSearch('');
+}
 
 defineOptions({
     layout: {
@@ -49,6 +73,30 @@ defineOptions({
             </div>
         </div>
 
+        <!-- Global Search Bar -->
+        <div class="relative">
+            <div class="relative flex items-center">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-zinc-400">
+                    <Search class="size-4" />
+                </div>
+                <input
+                    v-model="searchTerm"
+                    type="text"
+                    placeholder="Search meetings by title, speaker dialogue, or keywords..."
+                    class="w-full rounded-2xl border border-zinc-200/90 bg-white py-3 pl-11 pr-10 text-xs text-zinc-900 shadow-2xs transition-all placeholder:text-zinc-400 focus:border-sky-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:ring-sky-950/50"
+                />
+                <button
+                    v-if="searchTerm"
+                    type="button"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
+                    title="Clear search"
+                    @click="clearSearch"
+                >
+                    <X class="size-4" />
+                </button>
+            </div>
+        </div>
+
         <!-- Meeting Cards Grid -->
         <div
             v-if="meetings.data.length > 0"
@@ -61,7 +109,30 @@ defineOptions({
             />
         </div>
 
-        <!-- Empty State -->
+        <!-- Empty Search State -->
+        <div
+            v-else-if="searchTerm.trim()"
+            class="flex min-h-[320px] flex-col items-center justify-center rounded-3xl border border-dashed border-zinc-200 bg-white p-8 text-center dark:border-zinc-800 dark:bg-zinc-900"
+        >
+            <div class="flex size-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">
+                <Search class="size-7" />
+            </div>
+            <h3 class="mt-4 text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                No meetings matching "{{ searchTerm }}"
+            </h3>
+            <p class="mt-1 max-w-sm text-xs text-zinc-500 leading-relaxed dark:text-zinc-400">
+                We couldn't find any meeting titles or transcript dialogue matching your search. Try searching for a different keyword or speaker name.
+            </p>
+            <button
+                type="button"
+                class="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 shadow-xs transition-colors hover:bg-zinc-50 cursor-pointer dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                @click="clearSearch"
+            >
+                Clear search
+            </button>
+        </div>
+
+        <!-- Default Empty State -->
         <div
             v-else
             class="flex min-h-[300px] flex-col items-center justify-center rounded-3xl border border-dashed border-zinc-300 bg-white p-8 text-center dark:border-zinc-800 dark:bg-zinc-900"

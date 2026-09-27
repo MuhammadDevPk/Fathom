@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\MeetingFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -78,6 +79,26 @@ class Meeting extends Model
     public function highlights(): HasMany
     {
         return $this->hasMany(Highlight::class)->orderBy('timestamp_seconds');
+    }
+
+    /**
+     * Scope a query to search meetings by title or transcript text content.
+     *
+     * @param  Builder<Meeting>  $query
+     * @return Builder<Meeting>
+     */
+    public function scopeSearch(Builder $query, ?string $term): Builder
+    {
+        if ($term === null || trim($term) === '') {
+            return $query;
+        }
+
+        $term = trim($term);
+
+        return $query->where(function (Builder $q) use ($term) {
+            $q->where('title', 'like', "%{$term}%")
+                ->orWhere('transcript', 'like', "%{$term}%");
+        });
     }
 
     /**

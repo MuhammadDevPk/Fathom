@@ -10,6 +10,7 @@ Route::get('meetings', [MeetingController::class, 'index'])->name('meetings.inde
 Route::get('meetings/{meeting}', [MeetingController::class, 'show'])->name('meetings.show');
 Route::post('meetings/{meeting}/summary', [MeetingController::class, 'generateSummary'])->name('meetings.summary.generate');
 Route::post('meetings/{meeting}/highlights', [HighlightController::class, 'store'])->name('meetings.highlights.store');
+Route::post('meetings/{meeting}/ask', [MeetingController::class, 'ask'])->name('meetings.ask');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [MeetingController::class, 'index'])->name('dashboard');

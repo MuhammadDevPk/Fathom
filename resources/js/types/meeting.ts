@@ -49,3 +49,11 @@ export interface MeetingDetail {
     duration_seconds: number;
     created_at: string;
 }
+
+export interface QaItem {
+    id: string;
+    question: string;
+    answer: string;
+    created_at: string;
+}
+
